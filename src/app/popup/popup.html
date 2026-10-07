@@ -1,0 +1,37 @@
+@let isConnected = isConnected$ | async;
+@let isYoutube = isYoutube$ | async;
+@let tooltipMessage = appUrl() ? "Can't connect to the Retriever app." : "Set the app URL in the extension options.";
+
+<main>
+  <rt-popup-header />
+  <rt-line />
+
+  @if (!isDetectionEnabled() && !isYoutube) {
+    <section class="flex flex-col gap-2 p-4">
+      <p class="text-sm">
+        Retriever needs access to <span class="font-zinco">all sites</span> to find videos and audio on pages other than <span class="font-zinco">YouTube</span>.
+      </p>
+      <p class="text-sm">
+        Reload the page after allowing it.
+      </p>
+      <button mat-flat-button class="self-center mt-2 leading-none" (click)="enableDetection()">
+        Allow access
+      </button>
+    </section>
+  }
+
+  @if (isYoutube || isDetectionEnabled()) {
+    <section class="flex flex-col p-4 gap-4" [class.p-0!]="!isDetectionEnabled() && pageSources().length === 0" [matTooltip]="tooltipMessage" [matTooltipDisabled]="isConnected">
+      @for (source of pageSources(); track source.url) {
+        <rt-media-card 
+          [source]="source" 
+          [index]="sources().length - $index - 1" 
+          (downloadStarted)="handleDownload()"
+          [isAppConnected]="!!isConnected"
+        />
+      } @empty {
+        <p class="text-center text-gray-500">Nothing to download.</p>
+      }
+    </section>
+  }
+</main>

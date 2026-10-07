@@ -1,0 +1,21 @@
+@font-face {
+  font-family: 'manrope';
+  src: url('/assets/fonts/manrope.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'zinco';
+  src: url('/assets/fonts/zinco.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+.font-manrope {
+  font-family: 'manrope', sans-serif;
+}
+
+.font-zinco {
+  font-family: 'zinco', sans-serif;
+}

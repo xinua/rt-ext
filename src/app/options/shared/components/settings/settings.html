@@ -1,0 +1,60 @@
+<form class="w-full flex flex-col gap-2" [formGroup]="form">
+  <h1 class="text-xl mb-2 font-roboto">Extension settings</h1>
+
+  <mat-form-field class="w-full" appearance="outline">
+    <mat-label>App URL</mat-label>
+    <input matInput formControlName="appUrl" type="url" rtConnectValidator />
+
+    @if (form.controls.appUrl.pending) {
+      <mat-icon matSuffix fontIcon="loop" class="animate-spin-left" />
+    } @else if (form.controls.appUrl.valid && !!form.controls.appUrl.value) {
+      <mat-icon matSuffix fontIcon="check" />
+    }
+
+    @if (form.controls.appUrl.errors?.['invalidUrl']) {
+      <mat-error>
+        Cannot connect to the app. Please check the URL and try again.
+      </mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Extension behavior</mat-label>
+    <mat-select [value]="selectedOptions()" (selectionChange)="onOptionChange($event)" multiple>
+      <mat-select-trigger>
+        @for (option of selectedOptions(); track option) {
+          @let flag = option | flags;
+          @let text = flag.shortLabel;
+
+          <span class="text-sm list-comma">{{ text }}</span>
+        }
+      </mat-select-trigger>
+
+      @for (option of flags; track option) {
+        <mat-option
+          [value]="option.value"
+          [matTooltip]="option?.tooltip"
+          [matTooltipDisabled]="!option?.tooltip"
+          [matTooltipPosition]="'above'"
+        >
+          <div class="py-1 flex items-center gap-2">
+            <mat-icon [fontIcon]="option.icon" />
+
+            <div>
+              <p>{{ option.label }}</p>
+            </div>
+
+            @if (selectedOptions().includes(option.value)) {
+              <mat-icon fontIcon="check" class="text-(--rt-accent)! ml-auto" />
+            }
+          </div>
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <button matButton="filled" color="primary" type="submit" class="ml-auto" (click)="save()" [disabled]="form.invalid || form.pending">
+    <mat-icon>save</mat-icon>
+    Save
+  </button>
+</form>

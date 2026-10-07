@@ -1,0 +1,18 @@
+/* Background service worker and content script. Bundled by esbuild (scripts/build-scripts.mjs), not Angular. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["chrome"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": [
+    "src/background/**/*.ts",
+    "src/content/**/*.ts",
+    "src/shared/**/*.ts",
+    "src/dev/**/*.ts",
+    "src/globals.d.ts",
+    "src/scripts.d.ts"
+  ],
+  "exclude": ["src/**/*.spec.ts"]
+}

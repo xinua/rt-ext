@@ -1,0 +1,77 @@
+$pulse-width: 70px;
+
+// Animate `transform` (compositor-only) instead of `left`/`right`, which forced layout + repaint every frame.
+// `cqw` is relative to `.line` width (container), so the pulse travels the full line.
+@mixin moveAnimation($direction, $sign) {
+  @keyframes move-#{$direction} {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(calc(#{$sign} * (100cqw + #{2 * $pulse-width}))); }
+  }
+}
+
+@mixin animateProp($direction) {
+  #{$direction}: -$pulse-width;
+  will-change: transform;
+  animation: move-#{$direction} 8s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@include moveAnimation(right, -1);
+@include moveAnimation(left, 1);
+
+:host {
+  --mat-tab-animation-duration: 500ms;
+}
+
+.wrapper {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.line {
+  position: relative;
+  height: 1px;
+  container-type: inline-size;
+  &::before {
+    content: '';
+    height: 1px;
+    width: $pulse-width;
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(to right, transparent, var(--rt-color-primary), transparent);
+    z-index: 1;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    left: -10%;
+    bottom: 0;
+    height: 1px;
+    width: 120%;
+    background: linear-gradient(to right, transparent, rgba(#ec1e24, .7), transparent);
+    z-index: 3;
+  }
+  .corner {
+    height: 1px;
+    position: absolute;
+    bottom: 0;
+    width: 150px;
+    z-index: 2;
+    &-left {
+      left: -20px;
+      background: linear-gradient(to left, transparent, var(--rt-body-color) 80%);
+    }
+    &-right {
+      right: -20px;
+      background: linear-gradient(to right, transparent, var(--rt-body-color) 80%);
+    }
+  }
+}
+
+.right .line::before { @include animateProp('right') }
+.left .line::before { @include animateProp('left'); }
+
+

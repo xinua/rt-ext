@@ -1,0 +1,31 @@
+@let isVideo = type() === types.VIDEO;
+@let hasError = states()[type()] === 'failed' && errors()[type()];
+
+<button
+    matMiniFab
+    extended
+    class="pl-0! pr-1! text-right relative label-indicator"
+    [class]="isVideo ? 'rounded-e-none! pr-0! pl-1!' : 'rounded-s-none! pl-0! pr-1!'"
+    [attr.aria-label]="ariaLabels()[type()]"
+    [matTooltip]="hasError ? errors()[type()] : tooltips()[type()]"
+    [matTooltipDisabled]="!tooltips()[type()]"
+    matTooltipPosition="above"
+    disabledInteractive
+    (click)="download.emit()"
+    [disabled]="isDisabled()"
+  >
+    <div class="absolute right-1 top-1">
+      <div class="relative flex size-3">
+        @if (states()[type()] === 'downloading') {
+          <span class="absolute w-2 h-2 rounded-full {{ indicators()[type()] }} opacity-75 animate-ping"></span>
+        }
+        <span class="w-2 h-2 rounded-full {{ indicators()[type()] }}" aria-hidden="true"></span>
+      </div>
+    </div>
+  
+    <mat-icon
+      [fontIcon]="icons()[type()]"
+      class="scale-75"
+      [class.animate-spin-left]="states()[type()] === 'requesting'"
+    />
+  </button>

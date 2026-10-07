@@ -1,0 +1,58 @@
+@let isVideo = type() === downloadType.VIDEO;
+
+<form class="w-full flex flex-col gap-2" [formGroup]="form()">
+  <h1 class="text-xl mb-2 font-roboto">{{ isVideo ? 'Video' : 'Audio' }} settings</h1>
+
+  <mat-form-field class="w-full">
+    <mat-label>Type</mat-label>
+    <input matInput formControlName="type" />
+  </mat-form-field>
+
+  <div class="grid grid-cols-2 gap-4" [class.grid-cols-3]="isVideo">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Quality</mat-label>
+      <mat-select formControlName="quality">
+        <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
+          {{ form().controls.quality.value | titlecase }}
+        </mat-select-trigger>
+  
+        @for (quality of isVideo ? videoQualities : audioQualities; track quality) {
+          <mat-option [value]="quality">{{ quality | titlecase }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Format</mat-label>
+      <mat-select formControlName="format">
+        <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
+          {{ form().controls.format.value | titlecase }}
+        </mat-select-trigger>
+  
+        @for (format of isVideo ? videoFormats : audioFormats; track format) {
+          <mat-option [value]="format">{{ format | titlecase }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (isVideo) {
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Codec</mat-label>
+        <mat-select formControlName="codec">
+          <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
+            {{ form().controls.codec?.value | titlecase }}
+          </mat-select-trigger>
+    
+          @for (codec of codecs; track codec) {
+            <mat-option [value]="codec">{{ codec | titlecase }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  </div>
+
+  <button matButton="filled" color="primary" type="submit" class="ml-auto" (click)="save()" [disabled]="form().invalid">
+    <mat-icon>save</mat-icon>
+    Save
+  </button>
+</form>

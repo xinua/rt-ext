@@ -1,0 +1,39 @@
+{
+  "name": "Retriever",
+  "version": "1.0.0",
+  "description": "Download video and audio fast and easy",
+  "manifest_version": 3,
+  "icons": {
+    "16": "assets/logo-16.png",
+    "32": "assets/logo-32.png",
+    "48": "assets/logo-48.png",
+    "128": "assets/logo-128.png"
+  },
+  "action": {
+    "default_title": "Retriever",
+    "default_popup": "index.html#/popup",
+    "default_icon": {
+      "16": "assets/logo-16.png",
+      "32": "assets/logo-32.png"
+    }
+  },
+  "options_ui": {
+    "page": "index.html#/options",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*", "*://*.youtube-nocookie.com/*"],
+      "css": ["content-script.css"],
+      "js": ["content-script.js"],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
+  "permissions": ["contextMenus", "webNavigation", "activeTab", "storage", "webRequest"],
+  "host_permissions": [],
+  "optional_host_permissions": ["<all_urls>"]
+}

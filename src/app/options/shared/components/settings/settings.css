@@ -1,0 +1,13 @@
+::ng-deep .mat-pseudo-checkbox {
+  /* order: 3; */
+  /* margin-left: auto !important; */
+  display: none !important;
+}
+
+::ng-deep .mdc-list-item__primary-text {
+  width: 100%;
+}
+
+.list-comma:not(:last-child)::after {
+  content: ', ';
+}

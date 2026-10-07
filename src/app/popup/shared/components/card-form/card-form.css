@@ -1,0 +1,37 @@
+mat-form-field {
+  input, mat-select {
+    font-size: 12px !important;
+  }
+
+  label {
+    font-size: 12px !important;
+  }
+}
+
+.mat-mdc-form-field-infix {
+  --mat-form-field-container-height: 32px;
+  --mat-form-field-filled-with-label-container-padding-top: 12px;
+  --mat-form-field-filled-with-label-container-padding-bottom: 4px;
+}
+
+.mdc-floating-label {
+  --mat-form-field-container-height: 44px;
+}
+
+.mdc-floating-label--float-above {
+  --mat-form-field-container-height: 40px;
+}
+
+.mat-mdc-option.mdc-list-item {
+  font-size: 12px !important;
+  min-height: 32px !important;
+}
+
+.submit-button.used:hover {
+  .label-error {
+    display: inline !important;
+  }
+  .label {
+    display: none !important;
+  }
+}

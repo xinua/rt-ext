@@ -1,0 +1,25 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideFakeStorage } from '../../../../../testing/fake-storage-area';
+import { RtUrl } from './rt-url';
+
+describe('RtUrl', () => {
+  let component: RtUrl;
+  let fixture: ComponentFixture<RtUrl>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RtUrl],
+      providers: [provideFakeStorage(), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(RtUrl);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

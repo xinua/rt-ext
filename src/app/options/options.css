@@ -1,0 +1,79 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--rt-body-color);
+  cursor: url('/assets/icons/cursor.png') 0 0, auto;
+}
+
+a, button, .cursor-pointer, .mat-step-header, .mat-mdc-select-trigger,
+.mat-mdc-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-mdc-text-field-wrapper,
+.mat-mdc-option {
+  cursor: url('/assets/icons/cursor-pointer.png') 0 0, pointer !important;
+}
+
+/* input {
+  cursor: url('/assets/icons/cursor-text.png') 0 0, text !important;
+} */
+
+rt-options {
+  /* The host has to cover the viewport: pointer events are tracked on it. */
+  display: block;
+  min-height: 100dvh;
+
+  --rt-cell: 12px;
+  --rt-square: 1px;
+  --rt-glow-radius: 120px;
+  --rt-cursor-x: -100%;
+  --rt-cursor-y: -100%;
+  --rt-glow-opacity: 0;
+}
+
+.rt-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Base squares and glowing squares share one mask, so they align exactly. */
+.rt-grid::before,
+.rt-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  mask-image:
+    linear-gradient(90deg, #000 var(--rt-square), transparent 0),
+    linear-gradient(180deg, #000 var(--rt-square), transparent 0);
+  mask-size: var(--rt-cell) var(--rt-cell);
+  mask-composite: intersect;
+}
+ 
+.rt-grid::before {
+  background-color: var(--rt-section-color);
+  opacity: 0.35;
+}
+
+.rt-grid::after {
+  background-image: radial-gradient(
+    circle var(--rt-glow-radius) at var(--rt-cursor-x) var(--rt-cursor-y),
+    rgb(253 29 29) 0%,
+    rgb(253 29 29 / 0.4) 65%,
+    transparent 100%
+  );
+  opacity: var(--rt-glow-opacity);
+  transition: opacity 200ms ease-out;
+}
+
+.rt-options {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rt-grid::after {
+    transition: none;
+  }
+}

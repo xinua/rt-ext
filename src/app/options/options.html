@@ -1,0 +1,16 @@
+<div class="rt-grid" aria-hidden="true"></div>
+
+<main class="rt-options container mx-auto h-screen">
+  @if (appUrl()) {
+    <div class="opacity-0" [class.animate-fade-in]="appUrl()">
+      <div class="container mx-auto my-10">    
+        <rt-options-header />
+      </div>
+      <rt-stepper />
+    </div>
+  } @else {
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full">
+      <rt-url (connected)="saveAppUrl($event)" />
+    </div>
+  }
+</main>

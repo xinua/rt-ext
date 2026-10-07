@@ -1,0 +1,4 @@
+/* Separator between Retriever items and YouTube's own items in the player context menu */
+.ytp-contextmenu .retriever-menuitem + .ytp-menuitem:not(.retriever-menuitem) {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

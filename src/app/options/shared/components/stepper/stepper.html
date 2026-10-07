@@ -1,0 +1,51 @@
+<mat-stepper [linear]="false" #stepper class="pt-4 px-4 rounded-lg bg-(--mat-sys-surface)/60!">
+  <!-- Override the 'Edit' icon -->
+  <ng-template matStepperIcon="edit" let-index="index">
+    @if (index === 0) {
+      <mat-icon>settings</mat-icon>
+    } @else if (index === 1) {
+      <mat-icon>play_circle</mat-icon>
+    } @else {
+      <mat-icon>audiotrack</mat-icon>
+    }
+  </ng-template>
+
+  <!-- Override the 'Done' icon -->
+  <ng-template matStepperIcon="done" let-index="index">
+    @if (index === 0) {
+      <mat-icon>settings</mat-icon>
+    } @else if (index === 1) {
+      <mat-icon>play_circle</mat-icon>
+    } @else {
+      <mat-icon>audiotrack</mat-icon>
+    }
+  </ng-template>
+
+  <!-- Override the default 'Number' indicator -->
+  <ng-template matStepperIcon="number" let-index="index">
+     @if (index === 0) {
+      <mat-icon>settings</mat-icon>
+    } @else if (index === 1) {
+      <mat-icon>video_library</mat-icon>
+    } @else {
+      <mat-icon>audiotrack</mat-icon>
+    }
+  </ng-template>
+
+  <!-- Settings step -->
+  <mat-step  label="Settings" state="edit">
+    <rt-settings (notify)="showNotification($event)" />
+  </mat-step>
+
+  <!-- Video preset step -->
+  <mat-step  label="Video preset" state="edit">
+    <rt-download-config [type]="downloadType.VIDEO" (notify)="showNotification($event)" />
+  </mat-step>
+
+  <!-- Audio preset step -->
+  <mat-step  label="Audio preset" state="edit">
+    <rt-download-config [type]="downloadType.AUDIO" (notify)="showNotification($event)" />
+  </mat-step>
+</mat-stepper>
+
+<notifier-container />

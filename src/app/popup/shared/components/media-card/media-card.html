@@ -1,0 +1,114 @@
+@let isVideoDisabled = !isAppConnected() || states().video === 'requesting' || states().video === 'downloading' || source().label === labels.AUDIO;
+@let isAudioDisabled = !isAppConnected() || states().audio === 'requesting' || states().audio === 'downloading';
+
+<section class="source-card rounded-lg overflow-hidden bg-white/10 text-white relative hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300">
+  <header class="p-2 flex flex-col gap-2">
+    <div class="flex items-center gap-2">
+      <p [rtTruncate]="10" [truncateMaxLength]="45">{{ source().url }}</p>
+
+      <button
+        type="button"
+        class="ml-auto flex cursor-pointer"
+        aria-label="Copy URL"
+        (click)="copyUrl()"
+        [class.animate-shake]="isCopying()"
+      >
+        <mat-icon fontIcon="content_copy" class="text-xs! h-4! w-4! text-red-500! hover:text-red-300! transition-colors" aria-hidden="true" />
+      </button>
+
+      <button
+        type="button"
+        class="flex cursor-pointer"
+        aria-label="Open form"
+        (click)="openForm()"
+      >
+        <mat-icon 
+          fontIcon="expand_more" 
+          class="text-xs! h-4! w-4! text-red-500! hover:text-red-300! transition-all" 
+          [class.rotate-180]="showForm()"
+        />
+      </button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      @if (source().label; as label) {
+        <small class="w-fit uppercase tracking-wide ring-1 px-2 rounded-lg {{ badgeColor() }}">{{ label }}</small>
+      }
+
+      @if (source().label !== labels.AUDIO) {
+        @for (quality of qualities(); track quality) {
+          <small class="w-fit tracking-wide ring-1 px-2 rounded-lg bg-green-500/10 text-green-500">{{ quality }}p</small>
+        }
+      }
+    </div>
+  </header>
+
+  @if (!showForm() && source().thumbnail; as thumbnail) {
+    <div class="absolute top-0 left-0 w-full h-full -z-1">
+      <img [src]="thumbnail" alt="" class="w-full h-full object-cover aspect-video brightness-20" animate.enter="fade-in" />
+    </div>
+  }
+
+  @if (!showForm()) {
+    <footer class="grid grid-cols-2 gap-2 items-center p-2">
+      <div class="flex items-center gap-2">
+        @if (displayIndex(); as position) {
+          <div
+            class="select-none opacity-40 text-(--bg-color) font-extrabold text-5xl bg-clip-text text-shadow-[0px_2px_0px_rgba(255,255,255,0.1)]"
+            aria-hidden="true"
+          >{{ position }}</div>
+        }
+
+        <div class="flex flex-col gap-1 justify-between text-xs">
+          @if (useFolder()) {
+            <p>
+              <span>Folder:</span>
+              <span class="ml-2">{{ source().folder }}</span>
+            </p>
+          }
+
+          @if (usePrefix()) {
+            <p>
+              <span>Prefix:</span>
+              <span class="ml-2 w-full truncate">{{ source().prefix }}</span>
+            </p>
+          }
+        </div>
+      </div>
+
+      <div class="flex ml-auto scale-90">
+        @for (type of [types.VIDEO, types.AUDIO]; track type) {
+          @let isDisabled = type === types.VIDEO ? isVideoDisabled : isAudioDisabled;
+          <rt-download-btn 
+            [type]="type" 
+            [isDisabled]="isDisabled" 
+            [ariaLabels]="ariaLabels()" 
+            [tooltips]="tooltips()" 
+            [icons]="icons()" 
+            [indicators]="indicators()" 
+            [states]="states()" 
+            [errors]="errors" 
+            (download)="downloadSource(type, isDisabled)"
+          />
+        }
+      </div>
+    </footer>
+  }
+  
+  @if (showForm()) {
+    <rt-card-form 
+     [source]="source()"
+     [isRequesting]="isRequesting()" 
+     [isAppConnected]="isAppConnected()" 
+     [states]="states()" 
+     [isVideoDisabled]="isVideoDisabled"
+     [isAudioDisabled]="isAudioDisabled"
+     [errors]="errors"
+     [icons]="icons()"
+     [indicators]="indicators()"
+     [ariaLabels]="ariaLabels()"
+     (downloadStarted)="downloadCustom($event)"
+     animate.enter="fade-in"
+     />
+  }
+</section>

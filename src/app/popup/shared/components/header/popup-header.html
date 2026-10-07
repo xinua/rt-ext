@@ -1,0 +1,8 @@
+<header class="py-2 px-4 flex items-center gap-2">
+  <mat-icon svgIcon="retriever" />
+  <h1 class="text-2xl font-zinco leading-none cursor-pointer" (click)="openApp()" role="button" tabindex="0">Retriever</h1>
+
+  <button mat-icon-button class="ml-auto scale-75" (click)="openOptions()">
+    <mat-icon fontIcon="tune" class="text-red-500!" [class.animate-pulse]="!appUrl()" />
+  </button>
+</header>
