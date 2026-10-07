@@ -3,3 +3,4 @@ export * from './storage';
 export * from './text-width';
 export * from './tab-media';
 export * from './ws.service';
+export * from './manifest';

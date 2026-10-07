@@ -1,16 +1,22 @@
 
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, resource, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DownloadLookup, DownloadModel, DownloadSource, DownloadStatus, HttpService, Label, StorageService, Truncate, WsService } from '@shared';
+import { DownloadLookup, DownloadModel, DownloadSource, DownloadStatus, HttpService, Label, ManifestKind, ManifestService, StorageService, Truncate, WsService } from '@shared';
 import { tap } from 'rxjs';
+import { urlQualities } from '../../../../shared/helpers/manifest.helpers';
 import { CardFormValue, DownloadType } from '../../../../options/shared/models/forms.model';
 import { CardForm } from '../card-form/card-form';
 import { DownloadBtn } from '../download-btn/download-btn';
 import { IDLE_ICONS, IN_PROGRESS, INDICATOR_COLORS, LabelColor, LABELS_WITHOUT_INDEX, STATE_NAMES, TOOLTIPS, TYPE_NAMES, UNSUCCESSFUL } from './media-card.const';
 import { DownloadState, Tracked } from './media-card.model';
+
+const MANIFEST_KINDS: Partial<Record<Label, ManifestKind>> = {
+  [Label.HLS]: 'hls',
+  [Label.DASH]: 'dash',
+};
 
 /** What the app already has for this source, as tracked ids; types it never downloaded stay untracked. */
 function trackedFrom(lookup: DownloadLookup | null): Partial<Record<DownloadType, Tracked>> {
@@ -43,6 +49,7 @@ export class MediaCard {
   private readonly _storage = inject(StorageService);
   private readonly _httpService = inject(HttpService);
   private readonly _ws = inject(WsService);
+  private readonly _manifests = inject(ManifestService);
 
   readonly types = DownloadType;
   readonly labels = Label;
@@ -73,7 +80,24 @@ export class MediaCard {
 
   readonly useFolder = computed(() => this._storage.state().settings.useSubfolder);
   readonly usePrefix = computed(() => this._storage.state().settings.useNamePrefix);
-  readonly qualities = computed(() => this.source().label !== Label.AUDIO ? [480, 720, 1080, 1440, 2160].filter((quality) => this.source().url.includes(quality.toString())) : []);
+
+  /** Qualities a stream's manifest lists; idle for anything that isn't a stream. */
+  private readonly _manifestQualities = resource({
+    params: () => {
+      const { url, label } = this.source();
+      const kind = label && MANIFEST_KINDS[label];
+      return kind ? { url, kind } : undefined;
+    },
+    loader: ({ params, abortSignal }) => this._manifests.qualities(params.url, params.kind, abortSignal),
+  });
+
+  /** From the manifest when it lists any, otherwise guessed from the URL; empty while the manifest loads. */
+  readonly qualities = computed(() => {
+    const { url, label } = this.source();
+    if (label === Label.AUDIO || this._manifestQualities.isLoading()) return [];
+    const listed = this._manifestQualities.hasValue() ? this._manifestQualities.value() : [];
+    return listed.length ? listed : urlQualities(url);
+  });
 
   readonly badgeColor = computed(() => {
     const label = this.source().label;

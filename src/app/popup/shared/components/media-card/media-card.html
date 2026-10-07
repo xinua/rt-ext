@@ -30,15 +30,17 @@
       </button>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-start gap-2">
       @if (source().label; as label) {
-        <small class="w-fit uppercase tracking-wide ring-1 px-2 rounded-lg {{ badgeColor() }}">{{ label }}</small>
+        <small class="uppercase tracking-wide ring-1 px-2 rounded-lg {{ badgeColor() }} whitespace-nowrap w-fit h-fit py-0.5">{{ label }}</small>
       }
 
       @if (source().label !== labels.AUDIO) {
+        <div class="flex items-center gap-2 max-w-65 overflow-x-auto p-0.5">
         @for (quality of qualities(); track quality) {
-          <small class="w-fit tracking-wide ring-1 px-2 rounded-lg bg-green-500/10 text-green-500">{{ quality }}p</small>
-        }
+            <small class="w-fit tracking-wide ring-1 px-2 rounded-lg bg-green-500/10 text-green-500">{{ quality }}p</small>
+          }
+        </div>
       }
     </div>
   </header>

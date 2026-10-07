@@ -24,7 +24,7 @@ export const EXT_OPTIONS: SettingsOption[] = [
   },
   {
     value: 'showQuality',
-    label: 'Show quality based on the URL (for videos only)',
+    label: 'Show quality for videos',
     shortLabel: 'Show quality',
     enabled: true,
     icon: 'video_library',
