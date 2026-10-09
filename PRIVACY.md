@@ -42,12 +42,12 @@ On youtube.com and youtube-nocookie.com, the extension adds "Download video" and
 
 Data leaves your browser only to the Retriever app address you configured:
 
-| When | What is sent |
-| --- | --- |
-| You save or check the app address | A connection check (`/api/health`), with no personal data |
-| You open the popup while connected | The URLs shown in the popup, so the app can tell you whether they were already downloaded |
-| You choose to download | The media or page URL, its referring page, your download preset, and your folder or file-name options |
-| While the popup is open | A live connection that receives download progress from the app |
+| When                               | What is sent                                                                                          |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| You save or check the app address  | A connection check (`/api/health`), with no personal data                                             |
+| You open the popup while connected | The URLs shown in the popup, so the app can tell you whether they were already downloaded             |
+| You choose to download             | The media or page URL, its referring page, your download preset, and your folder or file-name options |
+| While the popup is open            | A live connection that receives download progress from the app                                        |
 
 The developer of this extension does not receive any of this data. What the Retriever app does with a request depends on who runs that app. If you use an instance run by someone else, their privacy practices apply to it.
 
@@ -60,15 +60,15 @@ The developer of this extension does not receive any of this data. What the Retr
 
 ## Permissions and why they are needed
 
-| Permission | Why |
-| --- | --- |
-| `storage` | Saves your settings, and keeps the media found in each tab |
-| `activeTab` | Reads the current tab's address when you open the popup |
-| `contextMenus` | Adds "Download video/audio" to the right-click menu on YouTube video links |
-| `webRequest` | Recognises media files among a tab's network requests (only with the optional permission below) |
-| `webNavigation` | Clears a tab's media list when the tab goes to a new page |
+| Permission                    | Why                                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| `storage`                     | Saves your settings, and keeps the media found in each tab                                        |
+| `activeTab`                   | Reads the current tab's address when you open the popup                                           |
+| `contextMenus`                | Adds "Download video/audio" to the right-click menu on YouTube video links                        |
+| `webRequest`                  | Recognises media files among a tab's network requests (only with the optional permission below)   |
+| `webNavigation`               | Clears a tab's media list when the tab goes to a new page                                         |
 | Optional: access to all sites | Needed for media detection on any website. Requested only when you turn detection on in the popup |
-| Content script on YouTube | Adds the download items to the YouTube player menu |
+| Content script on YouTube     | Adds the download items to the YouTube player menu                                                |
 
 ## Your choices
 

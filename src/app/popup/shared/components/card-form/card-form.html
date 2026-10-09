@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="w-full flex flex-col gap-2 p-2">
   <div class="grid grid-cols-2 gap-2">
-    <mat-form-field 
-      class="col-span-1" 
+    <mat-form-field
+      class="col-span-1"
       [class.col-span-2]="form.controls.type.value === downloadType.AUDIO"
       subscriptSizing="dynamic"
     >
@@ -10,7 +10,7 @@
         <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
           {{ form.controls.type.value | titlecase }}
         </mat-select-trigger>
-  
+
         @for (type of downloadTypes; track type) {
           @let isDisabled = type === downloadType.VIDEO && isVideoDisabled();
           <mat-option [value]="type" [disabled]="isDisabled">{{ type | titlecase }}</mat-option>
@@ -19,13 +19,13 @@
     </mat-form-field>
 
     @if (form.controls.type.value === downloadType.VIDEO) {
-      <mat-form-field  class="col-span-1" subscriptSizing="dynamic">
+      <mat-form-field class="col-span-1" subscriptSizing="dynamic">
         <mat-label>Codec</mat-label>
         <mat-select formControlName="codec">
           <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
             {{ form.controls.codec?.value | titlecase }}
           </mat-select-trigger>
-    
+
           @for (codec of codecs; track codec) {
             <mat-option [value]="codec">{{ codec | titlecase }}</mat-option>
           }
@@ -35,13 +35,13 @@
   </div>
 
   <div class="grid grid-cols-2 gap-2">
-    <mat-form-field  class="w-full" subscriptSizing="dynamic">
+    <mat-form-field class="w-full" subscriptSizing="dynamic">
       <mat-label>Quality</mat-label>
       <mat-select formControlName="quality">
         <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
           {{ form.controls.quality.value | titlecase }}
         </mat-select-trigger>
-  
+
         @let isVideo = form.controls.type.value === downloadType.VIDEO;
         @let qualityList = isVideo ? videoQualities : audioQualities;
 
@@ -51,38 +51,43 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field  class="w-full" subscriptSizing="dynamic">
+    <mat-form-field class="w-full" subscriptSizing="dynamic">
       <mat-label>Format</mat-label>
       <mat-select formControlName="format">
         <mat-select-trigger class="flex items-end gap-2 w-fit h-full">
           @let isAuto = form.controls.format.value === 'auto';
           {{ isAuto ? 'Auto' : form.controls.format.value }}
         </mat-select-trigger>
-  
+
         @let formatList = isVideo ? videoFormats : audioFormats;
         @for (format of formatList; track format) {
-          <mat-option [value]="format">{{ format === 'auto' ? 'Auto' : format}}</mat-option>
+          <mat-option [value]="format">{{ format === 'auto' ? 'Auto' : format }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
   </div>
 
-
   <div class="grid grid-cols-2 gap-2">
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Folder</mat-label>
-      <input matInput formControlName="folder" placeholder="e.g. movies" type="text" [matAutocomplete]="dir" />
+      <input
+        matInput
+        formControlName="folder"
+        placeholder="e.g. movies"
+        type="text"
+        [matAutocomplete]="dir"
+      />
 
       <mat-autocomplete #dir="matAutocomplete">
         @for (folder of folders(); track folder) {
-          <mat-option [value]="folder" >
+          <mat-option [value]="folder">
             {{ folder }}
           </mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
 
-    <mat-form-field  class="w-full" subscriptSizing="dynamic">
+    <mat-form-field class="w-full" subscriptSizing="dynamic">
       <mat-label>Prefix</mat-label>
       <input matInput formControlName="prefix" name="prefix" />
     </mat-form-field>
@@ -92,21 +97,28 @@
     @let isDownloading = states()[form.controls.type.value] === 'downloading';
     @let hasError = states()[form.controls.type.value] === 'failed';
     @let isDownloaded = states()[form.controls.type.value] === 'downloaded';
-    @let isDisabled = isRequesting() || states()[form.controls.type.value] === 'downloading' || (isVideoDisabled() && isAudioDisabled());
+    @let isDisabled =
+      isRequesting() ||
+      states()[form.controls.type.value] === 'downloading' ||
+      (isVideoDisabled() && isAudioDisabled());
 
     @if (isDownloading) {
-      <div class="loader-bg bg-amber-500! absolute top-0 left-0 w-full h-full z-1 rounded-lg overflow-hidden">
-        <div class="h-full w-20 bg-linear-to-r from-transparent via-amber-400 to-transparent animate-move-right absolute top-0 left-0"></div>
+      <div
+        class="loader-bg bg-amber-500! absolute top-0 left-0 w-full h-full z-1 rounded-lg overflow-hidden"
+      >
+        <div
+          class="h-full w-20 bg-linear-to-r from-transparent via-amber-400 to-transparent animate-move-right absolute top-0 left-0"
+        ></div>
       </div>
     }
 
-    <button 
-      matButton="filled" 
+    <button
+      matButton="filled"
       class="w-full text-sm! submit-button rounded-lg! transition-colors duration-500"
       [class.bg-green-700!]="isDownloaded"
       [class.bg-black!]="hasError"
       [class.used]="hasError || isDownloaded"
-      [disabled]="isDisabled" 
+      [disabled]="isDisabled"
       (click)="download()"
       [matTooltip]="errors()[form.controls.type.value]"
       [matTooltipDisabled]="!hasError"
@@ -115,7 +127,7 @@
         <mat-icon fontIcon="sync" class="scale-75 leading-none! animate-spin-left" />
       }
       <span [class.text-black]="isDownloading" class="label"
-        >{{ (states()[form.controls.type.value] || 'download') | titlecase }}
+        >{{ states()[form.controls.type.value] || 'download' | titlecase }}
       </span>
       <span class="label-error hidden">Download again</span>
     </button>

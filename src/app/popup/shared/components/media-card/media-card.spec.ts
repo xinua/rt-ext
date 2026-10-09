@@ -32,7 +32,11 @@ describe('MediaCard', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(MediaCard);
-    fixture.componentRef.setInput('source', { url: 'https://example.com/video.mp4', prefix: 'example', folder: 'example' });
+    fixture.componentRef.setInput('source', {
+      url: 'https://example.com/video.mp4',
+      prefix: 'example',
+      folder: 'example',
+    });
     fixture.componentRef.setInput('isAppConnected', false);
     component = fixture.componentInstance;
     await fixture.whenStable();
@@ -52,9 +56,17 @@ describe('MediaCard', () => {
     };
 
     it('reads a stream manifest', async () => {
-      const qualities = vi.spyOn(TestBed.inject(ManifestService), 'qualities').mockResolvedValue([1080, 720, 480]);
-      expect(await show('https://cdn.example.com/x_,1080,720,low,.urlset/manifest.mpd', Label.DASH)).toEqual([1080, 720, 480]);
-      expect(qualities).toHaveBeenCalledWith('https://cdn.example.com/x_,1080,720,low,.urlset/manifest.mpd', 'dash', expect.any(AbortSignal));
+      const qualities = vi
+        .spyOn(TestBed.inject(ManifestService), 'qualities')
+        .mockResolvedValue([1080, 720, 480]);
+      expect(
+        await show('https://cdn.example.com/x_,1080,720,low,.urlset/manifest.mpd', Label.DASH),
+      ).toEqual([1080, 720, 480]);
+      expect(qualities).toHaveBeenCalledWith(
+        'https://cdn.example.com/x_,1080,720,low,.urlset/manifest.mpd',
+        'dash',
+        expect.any(AbortSignal),
+      );
     });
 
     it('falls back to the URL when the manifest lists none', async () => {

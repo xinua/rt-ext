@@ -19,7 +19,9 @@ describe('Storage', () => {
   });
 
   it('starts from the defaults before hydration finishes', () => {
-    expect(setup({ settings: { appUrl: 'http://localhost:3000' } }).state()).toEqual(DEFAULT_STORAGE);
+    expect(setup({ settings: { appUrl: 'http://localhost:3000' } }).state()).toEqual(
+      DEFAULT_STORAGE,
+    );
   });
 
   it('hydrates from the storage area', async () => {
@@ -36,14 +38,18 @@ describe('Storage', () => {
     await service.set('settings', { ...DEFAULT_STORAGE.settings, appUrl: 'http://localhost:3000' });
 
     expect(service.state().settings.appUrl).toBe('http://localhost:3000');
-    expect((fake.items['settings'] as StorageModel['settings']).appUrl).toBe('http://localhost:3000');
+    expect((fake.items['settings'] as StorageModel['settings']).appUrl).toBe(
+      'http://localhost:3000',
+    );
   });
 
   it('picks up external changes', async () => {
     const service = setup();
     await service.ready;
 
-    fake.emit({ settings: { newValue: { ...DEFAULT_STORAGE.settings, appUrl: 'http://elsewhere' } } });
+    fake.emit({
+      settings: { newValue: { ...DEFAULT_STORAGE.settings, appUrl: 'http://elsewhere' } },
+    });
 
     expect(service.get('settings').appUrl).toBe('http://elsewhere');
   });

@@ -1,5 +1,14 @@
 import { TitleCasePipe } from '@angular/common';
-import { Component, DestroyRef, inject, input, OnInit, output, signal, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +19,17 @@ import { MatOption, MatSelectModule, MatSelectTrigger } from '@angular/material/
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DownloadSource, HttpService, Label, StorageService } from '@shared';
 import { Observable, tap } from 'rxjs';
-import { AudioFormats, AudioQuality, CardFormModel, CardFormValue, Codecs, DownloadType, FoldersModel, VideoFormats, VideoQuality } from '../../../../options/shared/models/forms.model';
+import {
+  AudioFormats,
+  AudioQuality,
+  CardFormModel,
+  CardFormValue,
+  Codecs,
+  DownloadType,
+  FoldersModel,
+  VideoFormats,
+  VideoQuality,
+} from '../../../../options/shared/models/forms.model';
 import { DownloadState } from '../media-card/media-card.model';
 
 @Component({
@@ -26,8 +45,8 @@ import { DownloadState } from '../media-card/media-card.model';
     MatSelectModule,
     MatTooltipModule,
     MatAutocompleteModule,
-    MatIcon
-],
+    MatIcon,
+  ],
   selector: 'rt-card-form',
   styleUrl: './card-form.css',
   templateUrl: './card-form.html',
@@ -72,9 +91,15 @@ export class CardForm implements OnInit {
   readonly labels = Label;
 
   ngOnInit() {
-    this.form.patchValue(this._storage.state()[this.isVideoDisabled() ? 'audioPreset' : 'videoPreset']);
-    this.form.controls.folder.setValue(this._storage.state().settings.useSubfolder ? this.source().folder : null);
-    this.form.controls.prefix.setValue(this._storage.state().settings.useNamePrefix ? this.source().prefix : null);
+    this.form.patchValue(
+      this._storage.state()[this.isVideoDisabled() ? 'audioPreset' : 'videoPreset'],
+    );
+    this.form.controls.folder.setValue(
+      this._storage.state().settings.useSubfolder ? this.source().folder : null,
+    );
+    this.form.controls.prefix.setValue(
+      this._storage.state().settings.useNamePrefix ? this.source().prefix : null,
+    );
 
     this._getFolders().subscribe();
   }
@@ -89,6 +114,6 @@ export class CardForm implements OnInit {
       tap(({ folders }) => {
         this.folders.set(folders);
       }),
-    )
+    );
   }
 }

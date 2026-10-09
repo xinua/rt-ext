@@ -26,16 +26,20 @@ export class HttpService {
 
   /** The latest download of every item the URL stands for, per type; empty lists when never downloaded. */
   lookup(url: string): Observable<DownloadLookup> {
-    return this._http.get<DownloadLookup>(`${this._appUrl()}/api/downloads/lookup`, { params: { url } });
+    return this._http.get<DownloadLookup>(`${this._appUrl()}/api/downloads/lookup`, {
+      params: { url },
+    });
   }
 
   getFolders(): Observable<FoldersModel> {
-    return this._http.get<FoldersModel>(`${this._appUrl()}/api/folders`).pipe(
-      catchError(async () => ({ root: '', folders: [] })),
-    );
+    return this._http
+      .get<FoldersModel>(`${this._appUrl()}/api/folders`)
+      .pipe(catchError(async () => ({ root: '', folders: [] })));
   }
   donwloadCustom(source: DownloadSource, body: CardFormValue): Observable<DownloadResult> {
-
-    return this._http.post<DownloadResult>(`${this._appUrl()}/api/downloads`, { url: source.url, ...body });
+    return this._http.post<DownloadResult>(`${this._appUrl()}/api/downloads`, {
+      url: source.url,
+      ...body,
+    });
   }
 }

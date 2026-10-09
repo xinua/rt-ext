@@ -1,6 +1,12 @@
-import { AudioFormats, AudioQuality, DownloadType, VideoFormats, VideoQuality } from "../../options/shared/models/forms.model";
-import { Nullable } from "./common.model";
-import { DownloadSource } from "./downloads.model";
+import {
+  AudioFormats,
+  AudioQuality,
+  DownloadType,
+  VideoFormats,
+  VideoQuality,
+} from '../../options/shared/models/forms.model';
+import { Nullable } from './common.model';
+import { DownloadSource } from './downloads.model';
 
 export interface DownloadPayload {
   url: string;

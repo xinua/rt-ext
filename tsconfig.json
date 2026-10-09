@@ -18,8 +18,8 @@
     "paths": {
       "@shared": ["./src/app/shared"],
       "@popup/shared": ["./src/app/popup/shared"],
-      "@options/shared": ["./src/app/options/shared"],
-    },
+      "@options/shared": ["./src/app/options/shared"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

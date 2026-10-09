@@ -1,5 +1,5 @@
-// Bundles the extension's non-Angular parts: the background script and the
-// content script. Each entry and everything it imports lands in one file,
+// Bundles the extension's non-Angular parts: the background script, the
+// content script and the app bridge. Each entry and everything it imports lands in one file,
 // because browsers load content scripts as classic scripts — they cannot
 // `import` anything at runtime. Angular's own `scripts` option only takes
 // plain .js and does not bundle, so it can't do this.
@@ -25,6 +25,7 @@ const options = {
     { in: 'src/background/main.ts', out: 'background' },
     { in: 'src/content/main.ts', out: 'content-script' },
     { in: 'src/content/styles.css', out: 'content-script' },
+    { in: 'src/content/app-bridge.ts', out: 'app-bridge' },
   ],
   outdir: OUT_DIR,
   bundle: true,

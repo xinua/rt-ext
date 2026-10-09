@@ -7,5 +7,4 @@ import { RouterOutlet } from '@angular/router';
   template: `<router-outlet />`,
   encapsulation: ViewEncapsulation.None,
 })
-export class App {
-}
+export class App {}

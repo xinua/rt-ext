@@ -1,4 +1,4 @@
-import { SettingsOption } from "./settings.model";
+import { SettingsOption } from './settings.model';
 
 export const EXT_OPTIONS: SettingsOption[] = [
   {

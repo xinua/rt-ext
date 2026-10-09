@@ -1,3 +1,1 @@
-export const ICONS_REGISTRY: string[] = [
-  'retriever'
-]
+export const ICONS_REGISTRY: string[] = ['retriever'];

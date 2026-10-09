@@ -9,7 +9,14 @@ import { Settings } from '../settings/settings';
 import { NotifierModule, NotifierService } from 'angular-notifier';
 
 @Component({
-  imports: [MatStepperModule, ReactiveFormsModule, DownloadConfig, Settings, MatIcon, NotifierModule],
+  imports: [
+    MatStepperModule,
+    ReactiveFormsModule,
+    DownloadConfig,
+    Settings,
+    MatIcon,
+    NotifierModule,
+  ],
   encapsulation: ViewEncapsulation.None,
   selector: 'rt-stepper',
   styleUrl: './stepper.css',

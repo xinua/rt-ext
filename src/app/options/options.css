@@ -5,13 +5,21 @@ body {
 
 body {
   background-color: var(--rt-body-color);
-  cursor: url('/assets/icons/cursor.png') 0 0, auto;
+  cursor:
+    url('/assets/icons/cursor.png') 0 0,
+    auto;
 }
 
-a, button, .cursor-pointer, .mat-step-header, .mat-mdc-select-trigger,
+a,
+button,
+.cursor-pointer,
+.mat-step-header,
+.mat-mdc-select-trigger,
 .mat-mdc-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-mdc-text-field-wrapper,
 .mat-mdc-option {
-  cursor: url('/assets/icons/cursor-pointer.png') 0 0, pointer !important;
+  cursor:
+    url('/assets/icons/cursor-pointer.png') 0 0,
+    pointer !important;
 }
 
 /* input {
@@ -50,7 +58,7 @@ rt-options {
   mask-size: var(--rt-cell) var(--rt-cell);
   mask-composite: intersect;
 }
- 
+
 .rt-grid::before {
   background-color: var(--rt-section-color);
   opacity: 0.35;

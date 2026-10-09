@@ -2,11 +2,13 @@
 // Listeners must be registered synchronously at the top level, or the browser
 // will not wake the background for those events.
 
+import { registerAppBridge } from './app-bridge';
 import { registerContextMenu } from './context-menu';
 import { registerInstall } from './install';
 import { registerMediaTracker } from './media-tracker';
 import { registerMessages } from './messages';
 
+registerAppBridge();
 registerContextMenu();
 registerInstall();
 registerMediaTracker();

@@ -9,7 +9,9 @@ export const useIconFactory = (sanitizer: DomSanitizer, registry: MatIconRegistr
 
       registry.addSvgIcon(
         iconName || path,
-        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/${path}${iconName ? `/${iconName}` : ''}.svg`),
+        sanitizer.bypassSecurityTrustResourceUrl(
+          `/assets/icons/${path}${iconName ? `/${iconName}` : ''}.svg`,
+        ),
       );
     });
   });

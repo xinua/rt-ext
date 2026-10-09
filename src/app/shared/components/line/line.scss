@@ -4,8 +4,13 @@ $pulse-width: 70px;
 // `cqw` is relative to `.line` width (container), so the pulse travels the full line.
 @mixin moveAnimation($direction, $sign) {
   @keyframes move-#{$direction} {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(calc(#{$sign} * (100cqw + #{2 * $pulse-width}))); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(calc(#{$sign} * (100cqw + #{2 * $pulse-width})));
+    }
   }
 }
 
@@ -51,7 +56,7 @@ $pulse-width: 70px;
     bottom: 0;
     height: 1px;
     width: 120%;
-    background: linear-gradient(to right, transparent, rgba(#ec1e24, .7), transparent);
+    background: linear-gradient(to right, transparent, rgba(#ec1e24, 0.7), transparent);
     z-index: 3;
   }
   .corner {
@@ -71,7 +76,9 @@ $pulse-width: 70px;
   }
 }
 
-.right .line::before { @include animateProp('right') }
-.left .line::before { @include animateProp('left'); }
-
-
+.right .line::before {
+  @include animateProp('right');
+}
+.left .line::before {
+  @include animateProp('left');
+}

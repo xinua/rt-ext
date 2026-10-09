@@ -1,4 +1,4 @@
-import { SettingsFormModel } from "../../models/forms.model";
+import { SettingsFormModel } from '../../models/forms.model';
 
 export interface SettingsOption {
   value: keyof SettingsFormModel;

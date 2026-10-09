@@ -1,4 +1,13 @@
-import { AudioFormats, AudioQuality, Codecs, DownloadModel, DownloadType, SettingsModel, VideoFormats, VideoQuality } from '../../options/shared/models/forms.model';
+import {
+  AudioFormats,
+  AudioQuality,
+  Codecs,
+  DownloadModel,
+  DownloadType,
+  SettingsModel,
+  VideoFormats,
+  VideoQuality,
+} from '../../options/shared/models/forms.model';
 import { StorageModel } from '../models';
 
 export const DEFAULT_SETTINGS: Readonly<SettingsModel> = {

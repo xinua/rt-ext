@@ -7,18 +7,26 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RtValidators, StorageService } from '@shared';
-import { AudioFormats, AudioQuality, Codecs, DownloadFormModel, DownloadType, VideoFormats, VideoQuality } from '../../models/forms.model';
+import {
+  AudioFormats,
+  AudioQuality,
+  Codecs,
+  DownloadFormModel,
+  DownloadType,
+  VideoFormats,
+  VideoQuality,
+} from '../../models/forms.model';
 import { filter, take, tap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   imports: [
-    MatInputModule, 
-    MatFormFieldModule, 
-    ReactiveFormsModule, 
-    MatButtonModule, 
-    MatIcon, 
-    MatSelectModule, 
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIcon,
+    MatSelectModule,
     TitleCasePipe,
   ],
   selector: 'rt-download-config',
@@ -27,15 +35,15 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class DownloadConfig implements OnInit {
   private readonly _storage = inject(StorageService);
-  
+
   notify = output<string>();
 
   type = input.required<DownloadType>();
-  form = computed(() => this.type() === DownloadType.VIDEO ? this._videoForm : this._audioForm);
+  form = computed(() => (this.type() === DownloadType.VIDEO ? this._videoForm : this._audioForm));
 
   private _form$ = toObservable(this.form);
   private _changedValidator?: ValidatorFn;
-  
+
   private _videoForm = new FormGroup<DownloadFormModel>({
     type: new FormControl<DownloadType>(DownloadType.VIDEO, { nonNullable: true }),
     quality: new FormControl<VideoQuality>(VideoQuality.BEST, { nonNullable: true }),
@@ -62,20 +70,23 @@ export class DownloadConfig implements OnInit {
   }
 
   ngOnInit(): void {
-    this._form$.pipe(
-      filter(Boolean),
-      take(1),
-      tap((form) => {
-        form.controls.type.disable();
-        this._resetValidators();
-      })
-    ).subscribe();
+    this._form$
+      .pipe(
+        filter(Boolean),
+        take(1),
+        tap((form) => {
+          form.controls.type.disable();
+          this._resetValidators();
+        }),
+      )
+      .subscribe();
   }
 
   save() {
     this._resetValidators();
     const storageKey = this.type() === DownloadType.VIDEO ? 'videoPreset' : 'audioPreset';
-    const message = (this.type() === DownloadType.VIDEO ? 'Video' : 'Audio') + ' preset has been updated';
+    const message =
+      (this.type() === DownloadType.VIDEO ? 'Video' : 'Audio') + ' preset has been updated';
 
     this._storage.set(storageKey, this.form().getRawValue()).then(() => {
       this.notify.emit(message);

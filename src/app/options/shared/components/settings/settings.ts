@@ -1,6 +1,12 @@
 import { Component, computed, inject, output, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -9,12 +15,14 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConnectValidatorDirective, RtValidators, StorageService } from '@shared';
-import { Observable } from 'rxjs';
+import { filter, from, Observable, of, take, tap } from 'rxjs';
 import { equalJson } from '../../../../shared/helpers/common.helpers';
 import { SettingsFormModel } from '../../models/forms.model';
 import { FlagsPipe } from './flags.pipe';
 import { EXT_OPTIONS } from './settings.const';
 import { SettingsOption } from './settings.model';
+import { appOriginPattern } from '../../../../../shared/app-bridge';
+import { ext } from '../../../../../shared/ext';
 
 @Component({
   imports: [
@@ -27,8 +35,8 @@ import { SettingsOption } from './settings.model';
     MatSelectModule,
     MatTooltipModule,
     FlagsPipe,
-    ConnectValidatorDirective
-],
+    ConnectValidatorDirective,
+  ],
   selector: 'rt-settings',
   styleUrl: './settings.css',
   templateUrl: './settings.html',
@@ -42,7 +50,10 @@ export class Settings {
 
   readonly flags = EXT_OPTIONS;
   form = new FormGroup<SettingsFormModel>({
-    appUrl: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, RtValidators.url] }),
+    appUrl: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, RtValidators.url],
+    }),
     openApp: new FormControl<boolean>(false, { nonNullable: true }),
     useSubfolder: new FormControl<boolean>(false, { nonNullable: true }),
     useNamePrefix: new FormControl<boolean>(false, { nonNullable: true }),
@@ -77,9 +88,16 @@ export class Settings {
   }
 
   save(): void {
-    this._storage.set('settings', { ...this.form.getRawValue(), appUrl: this.form.getRawValue().appUrl.replace(/\/$/, "") });
-    this.notify.emit('Settings have been saved');
-    this._resetValidators();
+    this._linkApp()
+      .pipe(tap(console.log),take(1), filter(Boolean))
+      .subscribe(() => {
+        this._storage.set('settings', {
+          ...this.form.getRawValue(),
+          appUrl: this.form.getRawValue().appUrl.replace(/\/$/, ''),
+        });
+        this.notify.emit('Settings have been saved');
+        this._resetValidators();
+      });
   }
 
   private _resetValidators() {
@@ -87,5 +105,11 @@ export class Settings {
     this._changedValidator = RtValidators.formChanged(this.form.getRawValue());
     this.form.addValidators(this._changedValidator);
     this.form.updateValueAndValidity();
+  }
+
+  private _linkApp(): Observable<boolean> {
+    const pattern = appOriginPattern(this.form.value.appUrl!);
+    if (!pattern) return of(false);
+    return from(ext.permissions.request({ origins: [pattern] }));
   }
 }

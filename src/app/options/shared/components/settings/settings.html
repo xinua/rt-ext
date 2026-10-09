@@ -12,9 +12,7 @@
     }
 
     @if (form.controls.appUrl.errors?.['invalidUrl']) {
-      <mat-error>
-        Cannot connect to the app. Please check the URL and try again.
-      </mat-error>
+      <mat-error> Cannot connect to the app. Please check the URL and try again. </mat-error>
     }
   </mat-form-field>
 
@@ -53,7 +51,14 @@
     </mat-select>
   </mat-form-field>
 
-  <button matButton="filled" color="primary" type="submit" class="ml-auto" (click)="save()" [disabled]="form.invalid || form.pending">
+  <button
+    matButton="filled"
+    color="primary"
+    type="submit"
+    class="ml-auto"
+    (click)="save()"
+    [disabled]="form.invalid || form.pending"
+  >
     <mat-icon>save</mat-icon>
     Save
   </button>

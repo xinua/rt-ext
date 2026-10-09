@@ -25,7 +25,9 @@ export function createFakeArea(initial: Record<string, unknown> = {}) {
         if (keys == null) return { ...items };
         if (typeof keys === 'string') keys = [keys];
         if (Array.isArray(keys)) {
-          return Object.fromEntries(keys.filter((key) => key in items).map((key) => [key, items[key]]));
+          return Object.fromEntries(
+            keys.filter((key) => key in items).map((key) => [key, items[key]]),
+          );
         }
         return { ...keys, ...items };
       },

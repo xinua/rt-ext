@@ -1,16 +1,46 @@
-
-import { Component, computed, inject, input, linkedSignal, output, resource, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  output,
+  resource,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DownloadLookup, DownloadModel, DownloadSource, DownloadStatus, HttpService, Label, ManifestKind, ManifestService, StorageService, Truncate, WsService } from '@shared';
+import {
+  DownloadLookup,
+  DownloadModel,
+  DownloadSource,
+  DownloadStatus,
+  HttpService,
+  Label,
+  ManifestKind,
+  ManifestService,
+  StorageService,
+  Truncate,
+  WsService,
+} from '@shared';
 import { tap } from 'rxjs';
 import { urlQualities } from '../../../../shared/helpers/manifest.helpers';
 import { CardFormValue, DownloadType } from '../../../../options/shared/models/forms.model';
 import { CardForm } from '../card-form/card-form';
 import { DownloadBtn } from '../download-btn/download-btn';
-import { IDLE_ICONS, IN_PROGRESS, INDICATOR_COLORS, LabelColor, LABELS_WITHOUT_INDEX, STATE_NAMES, TOOLTIPS, TYPE_NAMES, UNSUCCESSFUL } from './media-card.const';
+import {
+  IDLE_ICONS,
+  IN_PROGRESS,
+  INDICATOR_COLORS,
+  LabelColor,
+  LABELS_WITHOUT_INDEX,
+  STATE_NAMES,
+  TOOLTIPS,
+  TYPE_NAMES,
+  UNSUCCESSFUL,
+} from './media-card.const';
 import { DownloadState, Tracked } from './media-card.model';
 
 const MANIFEST_KINDS: Partial<Record<Label, ManifestKind>> = {
@@ -29,7 +59,10 @@ function trackedFrom(lookup: DownloadLookup | null): Partial<Record<DownloadType
 }
 
 /** A playlist queues many rows: it is downloading until all finish, and failed if any did. */
-function stateOf(tracked: Tracked | undefined, rows: ReadonlyMap<number, DownloadModel>): DownloadState | null {
+function stateOf(
+  tracked: Tracked | undefined,
+  rows: ReadonlyMap<number, DownloadModel>,
+): DownloadState | null {
   if (!tracked) return null;
   if (!Array.isArray(tracked)) return tracked;
   if (!tracked.length) return null;
@@ -66,11 +99,17 @@ export class MediaCard {
 
   private readonly _lookup = rxResource({
     params: () => (this.isAppConnected() ? this.source().url : undefined),
-    stream: ({ params }) => this._httpService.lookup(params).pipe(tap(({ video, audio }) => this._ws.seed([...video, ...audio]))),
+    stream: ({ params }) =>
+      this._httpService
+        .lookup(params)
+        .pipe(tap(({ video, audio }) => this._ws.seed([...video, ...audio]))),
   });
 
   /** Starts from what the app already has; a download started here replaces that type's entry. */
-  private readonly _tracked = linkedSignal<DownloadLookup | null, Partial<Record<DownloadType, Tracked>>>({
+  private readonly _tracked = linkedSignal<
+    DownloadLookup | null,
+    Partial<Record<DownloadType, Tracked>>
+  >({
     source: () => (this._lookup.hasValue() ? this._lookup.value() : null),
     // Keep whatever was clicked while the lookup was still in flight.
     computation: (lookup, previous) => ({ ...trackedFrom(lookup), ...previous?.value }),
@@ -88,7 +127,8 @@ export class MediaCard {
       const kind = label && MANIFEST_KINDS[label];
       return kind ? { url, kind } : undefined;
     },
-    loader: ({ params, abortSignal }) => this._manifests.qualities(params.url, params.kind, abortSignal),
+    loader: ({ params, abortSignal }) =>
+      this._manifests.qualities(params.url, params.kind, abortSignal),
   });
 
   /** From the manifest when it lists any, otherwise guessed from the URL; empty while the manifest loads. */
@@ -126,8 +166,12 @@ export class MediaCard {
   /** Idle icon per type, swapped for a spinner while the request is being sent; the indicator dot shows the rest. */
   readonly icons = computed(() => {
     const states = this.states();
-    const iconOf = (type: DownloadType) => (states[type] === 'requesting' ? 'sync' : IDLE_ICONS[type]);
-    return { [DownloadType.VIDEO]: iconOf(DownloadType.VIDEO), [DownloadType.AUDIO]: iconOf(DownloadType.AUDIO) };
+    const iconOf = (type: DownloadType) =>
+      states[type] === 'requesting' ? 'sync' : IDLE_ICONS[type];
+    return {
+      [DownloadType.VIDEO]: iconOf(DownloadType.VIDEO),
+      [DownloadType.AUDIO]: iconOf(DownloadType.AUDIO),
+    };
   });
 
   readonly indicators = computed(() => {
@@ -136,7 +180,10 @@ export class MediaCard {
       const state = states[type];
       return state ? INDICATOR_COLORS[state] : '';
     };
-    return { [DownloadType.VIDEO]: colorOf(DownloadType.VIDEO), [DownloadType.AUDIO]: colorOf(DownloadType.AUDIO) };
+    return {
+      [DownloadType.VIDEO]: colorOf(DownloadType.VIDEO),
+      [DownloadType.AUDIO]: colorOf(DownloadType.AUDIO),
+    };
   });
 
   /** Empty when there is nothing to report, which also disables the tooltip. */
@@ -146,7 +193,10 @@ export class MediaCard {
       const state = states[type];
       return state ? TOOLTIPS[state] : '';
     };
-    return { [DownloadType.VIDEO]: tooltipOf(DownloadType.VIDEO), [DownloadType.AUDIO]: tooltipOf(DownloadType.AUDIO) };
+    return {
+      [DownloadType.VIDEO]: tooltipOf(DownloadType.VIDEO),
+      [DownloadType.AUDIO]: tooltipOf(DownloadType.AUDIO),
+    };
   });
 
   readonly ariaLabels = computed(() => {
@@ -155,7 +205,10 @@ export class MediaCard {
       const state = states[type];
       return `Download ${TYPE_NAMES[type]}${state ? ` (${STATE_NAMES[state]})` : ''}`;
     };
-    return { [DownloadType.VIDEO]: labelOf(DownloadType.VIDEO), [DownloadType.AUDIO]: labelOf(DownloadType.AUDIO) };
+    return {
+      [DownloadType.VIDEO]: labelOf(DownloadType.VIDEO),
+      [DownloadType.AUDIO]: labelOf(DownloadType.AUDIO),
+    };
   });
 
   downloadSource(type: DownloadType, isDisabled: boolean) {
@@ -166,7 +219,10 @@ export class MediaCard {
     this._httpService.download(this.source(), type).subscribe({
       next: ({ downloads }) => {
         this._ws.seed(downloads);
-        this._track(type, downloads.map(({ id }) => id));
+        this._track(
+          type,
+          downloads.map(({ id }) => id),
+        );
         this.downloadStarted.emit();
       },
       error: (error: Error) => {
@@ -182,7 +238,10 @@ export class MediaCard {
     this._httpService.donwloadCustom(this.source(), body).subscribe({
       next: ({ downloads }) => {
         this._ws.seed(downloads);
-        this._track(body.type, downloads.map(({ id }) => id));
+        this._track(
+          body.type,
+          downloads.map(({ id }) => id),
+        );
         this.downloadStarted.emit();
       },
       error: (error: Error) => {

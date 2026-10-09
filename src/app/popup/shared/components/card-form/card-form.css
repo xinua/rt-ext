@@ -1,5 +1,6 @@
 mat-form-field {
-  input, mat-select {
+  input,
+  mat-select {
     font-size: 12px !important;
   }
 

@@ -23,7 +23,7 @@
 
   <!-- Override the default 'Number' indicator -->
   <ng-template matStepperIcon="number" let-index="index">
-     @if (index === 0) {
+    @if (index === 0) {
       <mat-icon>settings</mat-icon>
     } @else if (index === 1) {
       <mat-icon>video_library</mat-icon>
@@ -33,17 +33,17 @@
   </ng-template>
 
   <!-- Settings step -->
-  <mat-step  label="Settings" state="edit">
+  <mat-step label="Settings" state="edit">
     <rt-settings (notify)="showNotification($event)" />
   </mat-step>
 
   <!-- Video preset step -->
-  <mat-step  label="Video preset" state="edit">
+  <mat-step label="Video preset" state="edit">
     <rt-download-config [type]="downloadType.VIDEO" (notify)="showNotification($event)" />
   </mat-step>
 
   <!-- Audio preset step -->
-  <mat-step  label="Audio preset" state="edit">
+  <mat-step label="Audio preset" state="edit">
     <rt-download-config [type]="downloadType.AUDIO" (notify)="showNotification($event)" />
   </mat-step>
 </mat-stepper>

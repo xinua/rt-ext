@@ -1,4 +1,11 @@
-import { Component, computed, DestroyRef, ElementRef, inject, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,13 +24,13 @@ const CELL_SIZE = 12;
   styleUrl: './options.css',
   encapsulation: ViewEncapsulation.None,
   imports: [
-    MatButtonModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    RtUrl, 
-    Stepper, 
+    MatButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    RtUrl,
+    Stepper,
     OptionsHeader,
   ],
   host: {
@@ -64,7 +71,10 @@ export class Options {
   }
 
   saveAppUrl(appUrl: string) {
-    this._storage.set('settings', { ...this._storage.state().settings, appUrl: appUrl.replace(/\/$/, "") });
+    this._storage.set('settings', {
+      ...this._storage.state().settings,
+      appUrl: appUrl.replace(/\/$/, ''),
+    });
   }
 
   private _paintGlow() {

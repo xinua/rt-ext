@@ -4,8 +4,8 @@ import { equalJson } from '../helpers/common.helpers';
 export class RtValidators {
   static formChanged<T extends object>(sourceValue: T): ValidatorFn {
     const compareWith: T = window.structuredClone(sourceValue);
-    return ((form: AbstractControl | FormGroup): ValidationErrors | null =>
-      equalJson(form.value, compareWith) ? { unchanged: true } : null);
+    return (form: AbstractControl | FormGroup): ValidationErrors | null =>
+      equalJson(form.value, compareWith) ? { unchanged: true } : null;
   }
 
   static url(control: AbstractControl): ValidationErrors | null {
