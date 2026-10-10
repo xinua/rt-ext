@@ -31,14 +31,14 @@ export const IDLE_ICONS: Record<DownloadType, string> = {
 };
 export const INDICATOR_COLORS: Record<DownloadState, string> = {
   requesting: '',
-  downloading: 'bg-orange-500',
-  downloaded: 'bg-green-500',
+  processing: 'bg-orange-500',
+  completed: 'bg-green-500',
   failed: 'bg-(--rt-body-color)',
 };
 export const TOOLTIPS: Record<DownloadState, string> = {
   requesting: '',
-  downloading: 'Downloading',
-  downloaded: 'Downloaded',
+  processing: 'Processing',
+  completed: 'Completed',
   failed: 'Error',
 };
 export const TYPE_NAMES: Record<DownloadType, string> = {
@@ -47,7 +47,7 @@ export const TYPE_NAMES: Record<DownloadType, string> = {
 };
 export const STATE_NAMES: Record<DownloadState, string> = {
   requesting: 'sending',
-  downloading: 'downloading',
-  downloaded: 'downloaded',
+  processing: 'processing',
+  completed: 'completed',
   failed: 'failed',
 };

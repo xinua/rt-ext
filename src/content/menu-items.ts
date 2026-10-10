@@ -17,13 +17,13 @@ interface MenuItem {
 export const ITEMS: MenuItem[] = [
   {
     kind: 'video',
-    label: 'Download video',
-    // Material Symbols "download"
-    icon: 'M12 16l-5-5 1.4-1.45 2.6 2.6V4h2v8.15l2.6-2.6L17 11l-5 5Zm-6 4q-.825 0-1.412-.587Q4 18.825 4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413Q18.825 20 18 20H6Z',
+    label: 'Send video',
+    // Material Icons "play_circle_outline"
+    icon: 'M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8 S16.41,20,12,20z M9.5,16.5l7-4.5l-7-4.5V16.5z',
   },
   {
     kind: 'audio',
-    label: 'Download audio',
+    label: 'Send audio',
     // Material Symbols "music_note"
     icon: 'M10 21q-1.65 0-2.825-1.175Q6 18.65 6 17q0-1.65 1.175-2.825Q8.35 13 10 13q.575 0 1.063.137.487.138.937.413V3h6v4h-4v10q0 1.65-1.175 2.825Q11.65 21 10 21Z',
   },

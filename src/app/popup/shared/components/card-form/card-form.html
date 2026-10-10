@@ -94,15 +94,15 @@
   </div>
 
   <div class="relative">
-    @let isDownloading = states()[form.controls.type.value] === 'downloading';
+    @let isProcessing = states()[form.controls.type.value] === 'processing';
     @let hasError = states()[form.controls.type.value] === 'failed';
-    @let isDownloaded = states()[form.controls.type.value] === 'downloaded';
+    @let isCompleted = states()[form.controls.type.value] === 'completed';
     @let isDisabled =
       isRequesting() ||
-      states()[form.controls.type.value] === 'downloading' ||
+      states()[form.controls.type.value] === 'processing' ||
       (isVideoDisabled() && isAudioDisabled());
 
-    @if (isDownloading) {
+    @if (isProcessing) {
       <div
         class="loader-bg bg-amber-500! absolute top-0 left-0 w-full h-full z-1 rounded-lg overflow-hidden"
       >
@@ -115,9 +115,9 @@
     <button
       matButton="filled"
       class="w-full text-sm! submit-button rounded-lg! transition-colors duration-500"
-      [class.bg-green-700!]="isDownloaded"
+      [class.bg-green-700!]="isCompleted"
       [class.bg-black!]="hasError"
-      [class.used]="hasError || isDownloaded"
+      [class.used]="hasError || isCompleted"
       [disabled]="isDisabled"
       (click)="download()"
       [matTooltip]="errors()[form.controls.type.value]"
@@ -126,10 +126,10 @@
       @if (isRequesting()) {
         <mat-icon fontIcon="sync" class="scale-75 leading-none! animate-spin-left" />
       }
-      <span [class.text-black]="isDownloading" class="label"
-        >{{ states()[form.controls.type.value] || 'download' | titlecase }}
+      <span [class.text-black]="isProcessing" class="label"
+        >{{ states()[form.controls.type.value] || 'send' | titlecase }}
       </span>
-      <span class="label-error hidden">Download again</span>
+      <span class="label-error hidden">Send again</span>
     </button>
   </div>
 </form>

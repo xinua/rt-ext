@@ -68,9 +68,9 @@ function stateOf(
   if (!tracked.length) return null;
 
   const statuses = tracked.map((id) => rows.get(id)?.status ?? DownloadStatus.QUEUED);
-  if (statuses.some((status) => IN_PROGRESS.has(status))) return 'downloading';
+  if (statuses.some((status) => IN_PROGRESS.has(status))) return 'processing';
   if (statuses.some((status) => UNSUCCESSFUL.has(status))) return 'failed';
-  return 'downloaded';
+  return 'completed';
 }
 
 @Component({
@@ -203,7 +203,7 @@ export class MediaCard {
     const states = this.states();
     const labelOf = (type: DownloadType) => {
       const state = states[type];
-      return `Download ${TYPE_NAMES[type]}${state ? ` (${STATE_NAMES[state]})` : ''}`;
+      return `Send ${TYPE_NAMES[type]}${state ? ` (${STATE_NAMES[state]})` : ''}`;
     };
     return {
       [DownloadType.VIDEO]: labelOf(DownloadType.VIDEO),

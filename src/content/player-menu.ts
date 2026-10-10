@@ -1,4 +1,4 @@
-// Adds "Download video" / "Download audio" items to the YouTube player's
+// Adds "Send video" / "Send audio" items to the YouTube player's
 // own right-click menu (.ytp-contextmenu).
 
 import { ext } from '../shared/ext';

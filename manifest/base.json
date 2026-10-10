@@ -1,7 +1,7 @@
 {
   "name": "Retriever",
   "version": "1.0.0",
-  "description": "Download video and audio fast and easy",
+  "description": "Send videos and audio URLs from the web to your self-hosted Retriever app",
   "manifest_version": 3,
   "icons": {
     "16": "assets/logo-16.png",

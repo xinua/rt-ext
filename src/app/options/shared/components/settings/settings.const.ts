@@ -3,7 +3,7 @@ import { SettingsOption } from './settings.model';
 export const EXT_OPTIONS: SettingsOption[] = [
   {
     value: 'openApp',
-    label: 'Open Retriever app in new tab on download start',
+    label: 'Open Retriever app in a new tab after sending',
     shortLabel: 'Open app',
     enabled: true,
     icon: 'open_in_new',

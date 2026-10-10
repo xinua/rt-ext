@@ -1,10 +1,10 @@
 @let isVideoDisabled =
   !isAppConnected() ||
   states().video === 'requesting' ||
-  states().video === 'downloading' ||
+  states().video === 'processing' ||
   source().label === labels.AUDIO;
 @let isAudioDisabled =
-  !isAppConnected() || states().audio === 'requesting' || states().audio === 'downloading';
+  !isAppConnected() || states().audio === 'requesting' || states().audio === 'processing';
 
 <section
   class="source-card rounded-lg overflow-hidden bg-white/10 text-white relative hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300"

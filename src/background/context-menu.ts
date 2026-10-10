@@ -21,7 +21,7 @@ export function registerContextMenu(): void {
     const visible = hasAppUrl(await readStorage());
     ext.contextMenus.create({
       id: MENU.video,
-      title: 'Download video',
+      title: 'Send video',
       contexts: ['link'],
       documentUrlPatterns: YT_PAGES,
       targetUrlPatterns: YT_VIDEO_LINKS,
@@ -29,7 +29,7 @@ export function registerContextMenu(): void {
     });
     ext.contextMenus.create({
       id: MENU.audio,
-      title: 'Download audio',
+      title: 'Send audio',
       contexts: ['link'],
       documentUrlPatterns: YT_PAGES,
       targetUrlPatterns: YT_VIDEO_LINKS,

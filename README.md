@@ -4,27 +4,27 @@
 
 # 🐕 Retriever — Browser Extension
 
-**Fetch any video on the page with one click and send it straight to your [Retriever](https://github.com/xinua/retriever).**
+**Send any video or audio on the page to your own [Retriever](https://github.com/xinua/retriever) with one click.**
 
 ---
 
 ## What is this?
 
-This is the companion browser extension for **[Retriever](https://github.com/xinua/retriever)**, the self-hosted Web UI for `yt-dlp`.
+This is the companion browser extension for **[Retriever](https://github.com/xinua/retriever)**, a self-hosted media library.
 
-The extension does no downloading itself. It finds what's worth downloading on the page you're looking at and hands it to **your own** Retriever instance, which downloads it into your library. No copy-pasting URLs between tabs.
+The extension doesn't store or process any media itself. It finds the video and audio on the page you're looking at and sends the link to **your own** Retriever instance, which adds it to your library. No copy-pasting URLs between tabs.
 
-- 🎬 **On YouTube** — "Download video" and "Download audio" right in the player's menu and on the right-click menu of any video link
+- 🎬 **On YouTube** — "Send video" and "Send audio" right in the player's menu and on the right-click menu of any video link
 - 🌍 **On any other site** — the popup lists the video and audio files and streams the page loads, ready to send
-- ⚙️ **Your presets** — quality, format and codec set once, used for every download
+- ⚙️ **Your presets** — quality, format and codec set once, used for everything you send
 
 Works in **Chrome** (120+) and **Firefox** (142+).
 
 ---
 
-  🐕 [Retriever app](https://github.com/xinua/retriever)
+🐕 [Retriever app](https://github.com/xinua/retriever)
 
-  🔒 [Privacy policy](PRIVACY.md)
+🔒 [Privacy policy](PRIVACY.md)
 
 ## 📷 Screenshots
 
@@ -35,41 +35,33 @@ Works in **Chrome** (120+) and **Firefox** (142+).
   <br>
   <img src="demo/hls.png" alt="HLS Stream Example">
   <img src="demo/dash.png" alt="Dash Stream Example">
-  <img src="demo/dash_form.png" alt="Form example">
+  <img src="demo/form.png" alt="Form example">
 </details>
 
 ## ✨ Features
 
+### Send from anywhere
 
-
-### Download from anywhere
-
-- ▶️ **YouTube player menu** — right-click the player and pick *Download video* or *Download audio*
+- ▶️ **YouTube player menu** — right-click the player and pick _Send video_ or _Send audio_
 - 🖱 **Link context menu** — right-click any YouTube video link, thumbnail or Short
 - 🔎 **Media detection** — spots `.mp4`, `.mp3`, `.m3u8`, `.mpd` and friends among a tab's network requests, with type and size
-- 🧭 **Page URL too** — on any of the thousand-odd sites `yt-dlp` has an extractor for, the page itself is offered as a source
-- 🔗 **Referer kept** — sites that refuse downloads without it still work
-
-
+- 🧭 **Page URL too** — on any of the thousand-odd sites the Retriever app supports, the page itself is offered as a source
+- 🔗 **Referer kept** — sites that refuse requests without it still work
 
 ### Popup
 
 - 🃏 **Media cards** — every source on the page, with its own type, quality, format and codec
-- ✅ **Already downloaded?** — the app tells the popup which links you already have
+- ✅ **Already in your library?** — the app tells the popup which links you already have
 - 📊 **Live progress** over WebSocket while the popup is open
-- 🚀 **Open app on download** — optionally jump to Retriever as soon as a download starts
-
-
+- 🚀 **Open app after sending** — optionally jump to Retriever as soon as it gets a link
 
 ### Options
 
 - 🔌 **Connection check** — enter your app URL once; the extension verifies it before saving
-- 🎞 **Video preset** and 🎵 **Audio preset** — defaults for every download
+- 🎞 **Video preset** and 🎵 **Audio preset** — defaults for everything you send
 - 📂 **Subfolder per site** — files land in a folder named after the tab's hostname
 - 🏷 **Name prefix per source** — filenames get the source's hostname in front
 - 🤝 **App bridge** — the Retriever app knows the extension is installed and which version
-
-
 
 ### Privacy first
 
@@ -80,8 +72,6 @@ Works in **Chrome** (120+) and **Firefox** (142+).
 Full details in the [privacy policy](PRIVACY.md).
 
 ---
-
-
 
 ## 🚀 Installation
 
@@ -98,22 +88,16 @@ pnpm build
 
 This produces, for each browser:
 
-
 | Path                                | What it is             |
 | ----------------------------------- | ---------------------- |
 | `dist/chrome/`, `dist/firefox/`     | The unpacked extension |
 | `dist/retriever-<ver>-<target>.zip` | Store-ready package    |
-
-
-
 
 ### Chrome
 
 1. Open `chrome://extensions`
 2. Turn on **Developer mode** (top right)
 3. Click **Load unpacked** and pick `dist/chrome`
-
-
 
 ### Firefox
 
@@ -130,29 +114,23 @@ The options page opens on its own after install:
 2. Let the browser grant access to that address when asked — that's how the app bridge talks to the app
 3. Tune your video and audio presets
 
-Then open any YouTube video — the download items are already in the player menu. For other sites, open the popup and click **Allow access**.
+Then open any YouTube video — the _Send video_ and _Send audio_ items are already in the player menu. For other sites, open the popup and click **Allow access**.
 
 ---
 
-
-
 ## 🛡 Permissions
-
 
 | Permission            | Why                                                                  |
 | --------------------- | -------------------------------------------------------------------- |
 | `storage`             | Your settings and the media found in each tab                        |
 | `activeTab`           | Reads the current tab's address when you open the popup              |
-| `contextMenus`        | *Download video/audio* on YouTube video links                        |
+| `contextMenus`        | _Send video/audio_ on YouTube video links                            |
 | `webRequest`          | Recognises media files among a tab's requests                        |
 | `webNavigation`       | Clears a tab's media list when it navigates                          |
 | `scripting`           | Injects the app bridge into the Retriever app's own pages            |
-| *Optional:* all sites | Media detection outside YouTube — asked for only when you turn it on |
-
+| _Optional:_ all sites | Media detection outside YouTube — asked for only when you turn it on |
 
 ---
-
-
 
 ## 🛠 Development
 
@@ -179,7 +157,7 @@ scripts/         build, dev and live-reload scripts
 src/app/         Angular pages: popup and options
 src/background/  service worker: API calls, context menu, media detection, app bridge
 src/content/     YouTube player menu and the app bridge content script
-src/shared/      code used by both sides (storage, messages, yt-dlp site list)
+src/shared/      code used by both sides (storage, messages, supported-site list)
 src/dev/         live-reload clients, stripped from production builds
 ```
 

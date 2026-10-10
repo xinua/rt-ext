@@ -14,7 +14,7 @@ const TYPES: Record<DownloadKind, DownloadType> = {
 export async function download(pageUrl: string, kind: DownloadKind): Promise<void> {
   const storage = await readStorage();
   if (!hasAppUrl(storage)) {
-    console.warn('[Retriever] No app URL set in the options; download skipped.');
+    console.warn('[Retriever] No app URL set in the options; request skipped.');
     return;
   }
   const { appUrl, openApp } = storage.settings;
@@ -23,7 +23,7 @@ export async function download(pageUrl: string, kind: DownloadKind): Promise<voi
   const url = youTubeVideoUrl(pageUrl) ?? pageUrl;
   const site = siteName(url);
   const body = downloadPayload(storage, { url, prefix: site, folder: site }, TYPES[kind]);
-  console.log(`[Retriever] Download ${kind}:`, url);
+  console.log(`[Retriever] Send ${kind}:`, url);
 
   const res = await fetch(`${appUrl}/api/downloads`, {
     method: 'POST',
@@ -31,7 +31,7 @@ export async function download(pageUrl: string, kind: DownloadKind): Promise<voi
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    console.warn('[Retriever] Download request failed:', res.status, await res.text());
+    console.warn('[Retriever] Request failed:', res.status, await res.text());
     return;
   }
   if (openApp) await ext.tabs.create({ url: appUrl });
