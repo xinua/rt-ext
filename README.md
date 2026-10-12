@@ -38,15 +38,20 @@ Works in **Chrome** (120+) and **Firefox** (142+).
   <img src="demo/form.png" alt="Form example">
 </details>
 
+
 ## ✨ Features
+
+
 
 ### Send from anywhere
 
-- ▶️ **YouTube player menu** — right-click the player and pick _Send video_ or _Send audio_
+- ▶️ **YouTube player menu** — right-click the player and pick *Send video* or *Send audio*
 - 🖱 **Link context menu** — right-click any YouTube video link, thumbnail or Short
 - 🔎 **Media detection** — spots `.mp4`, `.mp3`, `.m3u8`, `.mpd` and friends among a tab's network requests, with type and size
 - 🧭 **Page URL too** — on any of the thousand-odd sites the Retriever app supports, the page itself is offered as a source
 - 🔗 **Referer kept** — sites that refuse requests without it still work
+
+
 
 ### Popup
 
@@ -55,6 +60,8 @@ Works in **Chrome** (120+) and **Firefox** (142+).
 - 📊 **Live progress** over WebSocket while the popup is open
 - 🚀 **Open app after sending** — optionally jump to Retriever as soon as it gets a link
 
+
+
 ### Options
 
 - 🔌 **Connection check** — enter your app URL once; the extension verifies it before saving
@@ -62,6 +69,8 @@ Works in **Chrome** (120+) and **Firefox** (142+).
 - 📂 **Subfolder per site** — files land in a folder named after the tab's hostname
 - 🏷 **Name prefix per source** — filenames get the source's hostname in front
 - 🤝 **App bridge** — the Retriever app knows the extension is installed and which version
+
+
 
 ### Privacy first
 
@@ -73,25 +82,18 @@ Full details in the [privacy policy](PRIVACY.md).
 
 ---
 
+
+
 ## 🚀 Installation
 
 > The extension isn't in the Chrome Web Store or on AMO yet, so for now it's a **manual install**.
 
 You need a running [Retriever](https://github.com/xinua/retriever#-quick-start) first.
 
-### Build it
+### Download latest version from Release assets
 
-```bash
-pnpm install
-pnpm build
-```
-
-This produces, for each browser:
-
-| Path                                | What it is             |
-| ----------------------------------- | ---------------------- |
-| `dist/chrome/`, `dist/firefox/`     | The unpacked extension |
-| `dist/retriever-<ver>-<target>.zip` | Store-ready package    |
+Click to download extension for [Chrome](https://github.com/xinua/rt-ext/releases/latest/download/chrome.zip) or [Firefox](https://github.com/xinua/rt-ext/releases/latest/download/firefox.zip).
+You always can find Download button in Retriever -> App settings -> "Extension" tab.
 
 ### Chrome
 
@@ -99,12 +101,15 @@ This produces, for each browser:
 2. Turn on **Developer mode** (top right)
 3. Click **Load unpacked** and pick `dist/chrome`
 
+
+
 ### Firefox
 
 1. Open `about:debugging#/runtime/this-firefox`
 2. Click **Load Temporary Add-on…** and pick any file inside `dist/firefox` (e.g. `manifest.json`)
 
-Temporary add-ons are removed when Firefox restarts. Or just run `pnpm start:firefox` to launch a Firefox profile with the extension loaded.
+Temporary add-ons are removed when Firefox restarts. Or just run `pnpm start:firefox` to launch a Firefox profile with the extension loaded.  
+**The extension will be available to install from Firefox official Store soon.**
 
 ### First run
 
@@ -114,23 +119,29 @@ The options page opens on its own after install:
 2. Let the browser grant access to that address when asked — that's how the app bridge talks to the app
 3. Tune your video and audio presets
 
-Then open any YouTube video — the _Send video_ and _Send audio_ items are already in the player menu. For other sites, open the popup and click **Allow access**.
+Then open any YouTube video — the *Send video* and *Send audio* items are already in the player menu. For other sites, open the popup and click **Allow access**.
 
 ---
 
+
+
 ## 🛡 Permissions
+
 
 | Permission            | Why                                                                  |
 | --------------------- | -------------------------------------------------------------------- |
 | `storage`             | Your settings and the media found in each tab                        |
 | `activeTab`           | Reads the current tab's address when you open the popup              |
-| `contextMenus`        | _Send video/audio_ on YouTube video links                            |
+| `contextMenus`        | *Send video/audio* on YouTube video links                            |
 | `webRequest`          | Recognises media files among a tab's requests                        |
 | `webNavigation`       | Clears a tab's media list when it navigates                          |
 | `scripting`           | Injects the app bridge into the Retriever app's own pages            |
-| _Optional:_ all sites | Media detection outside YouTube — asked for only when you turn it on |
+| *Optional:* all sites | Media detection outside YouTube — asked for only when you turn it on |
+
 
 ---
+
+
 
 ## 🛠 Development
 
