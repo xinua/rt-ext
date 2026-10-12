@@ -39,15 +39,16 @@ export function registerContextMenu(): void {
 
   watchAppUrl(setVisible);
 
-  ext.contextMenus.onClicked.addListener((info) => {
+  ext.contextMenus.onClicked.addListener((info, tab) => {
     if (!info.linkUrl) return;
+    const incognito = !!tab?.incognito;
 
     switch (info.menuItemId) {
       case MENU.video:
-        void download(info.linkUrl, 'video');
+        void download(info.linkUrl, 'video', incognito);
         break;
       case MENU.audio:
-        void download(info.linkUrl, 'audio');
+        void download(info.linkUrl, 'audio', incognito);
         break;
     }
   });

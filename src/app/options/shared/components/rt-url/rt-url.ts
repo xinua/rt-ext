@@ -7,16 +7,16 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { ConnectValidatorDirective } from '@shared';
 import {
-    BehaviorSubject,
-    delay,
-    filter,
-    finalize,
-    interval,
-    map,
-    Observable,
-    switchMap,
-    take,
-    tap,
+  BehaviorSubject,
+  delay,
+  filter,
+  finalize,
+  interval,
+  map,
+  Observable,
+  switchMap,
+  take,
+  tap,
 } from 'rxjs';
 import { appOriginPattern } from '../../../../../shared/app-bridge';
 import { ext } from '../../../../../shared/ext';

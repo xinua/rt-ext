@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideFakeStorage } from '../../../../../testing/fake-storage-area';
-import { Label, ManifestService } from '@shared';
+import { provideFakeActiveTab, provideFakeStorage } from '../../../../../testing/fake-storage-area';
+import { DownloadModel, DownloadStatus, Label, ManifestService, WsService } from '@shared';
+import { DownloadType } from '../../../../options/shared/models/forms.model';
 import { MediaCard } from './media-card';
 
 describe('MediaCard', () => {
@@ -28,7 +29,12 @@ describe('MediaCard', () => {
 
     await TestBed.configureTestingModule({
       imports: [MediaCard],
-      providers: [provideFakeStorage(), provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideFakeStorage(),
+        provideFakeActiveTab(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MediaCard);
@@ -78,6 +84,41 @@ describe('MediaCard', () => {
       const qualities = vi.spyOn(TestBed.inject(ManifestService), 'qualities');
       expect(await show('https://cdn.example.com/video_1080.mp4', Label.VIDEO)).toEqual([1080]);
       expect(qualities).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('progress', () => {
+    const row = (id: number, status: DownloadStatus, progress: number) =>
+      ({ id, status, progress }) as DownloadModel;
+
+    const start = (rows: DownloadModel[]) => {
+      component.downloadSource(DownloadType.VIDEO, false);
+      TestBed.inject(HttpTestingController)
+        .expectOne((req) => req.url.endsWith('/api/downloads'))
+        .flush({ downloads: rows });
+    };
+
+    const update = (rows: DownloadModel[]) => TestBed.inject(WsService)['_upsert'](rows);
+
+    it('follows the running download', () => {
+      start([row(1, DownloadStatus.QUEUED, 0)]);
+      expect(component.progress()[DownloadType.VIDEO]).toBe(0);
+
+      update([row(1, DownloadStatus.RUNNING, 37)]);
+      expect(component.progress()[DownloadType.VIDEO]).toBe(37);
+      expect(component.ariaLabels()[DownloadType.VIDEO]).toContain('37%');
+    });
+
+    it('averages a playlist, counting finished entries as whole', () => {
+      start([row(1, DownloadStatus.DONE, 100), row(2, DownloadStatus.RUNNING, 50)]);
+      expect(component.progress()[DownloadType.VIDEO]).toBe(75);
+    });
+
+    it('is null once nothing runs', () => {
+      start([row(1, DownloadStatus.RUNNING, 90)]);
+      update([row(1, DownloadStatus.DONE, 100)]);
+      expect(component.progress()[DownloadType.VIDEO]).toBeNull();
+      expect(component.progress()[DownloadType.AUDIO]).toBeNull();
     });
   });
 });

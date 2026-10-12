@@ -5,9 +5,11 @@
   source().label === labels.AUDIO;
 @let isAudioDisabled =
   !isAppConnected() || states().audio === 'requesting' || states().audio === 'processing';
+@let hasDone = states().video === 'completed' || states().audio === 'completed';
 
 <section
-  class="source-card rounded-lg overflow-hidden bg-white/10 text-white relative hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300"
+  class="source-card rounded-lg overflow-hidden bg-white/10 text-white relative hover:shadow-lg transition-all duration-300"
+  [class]="hasDone ? 'hover:shadow-green-500/20' : 'hover:shadow-red-500/20'"
 >
   <header class="p-2 flex flex-col gap-2">
     <div class="flex items-center gap-2">
@@ -109,6 +111,7 @@
             [icons]="icons()"
             [indicators]="indicators()"
             [states]="states()"
+            [progress]="progress()"
             [errors]="errors"
             (download)="downloadSource(type, isDisabled)"
           />
@@ -123,6 +126,7 @@
       [isRequesting]="isRequesting()"
       [isAppConnected]="isAppConnected()"
       [states]="states()"
+      [progress]="progress()"
       [isVideoDisabled]="isVideoDisabled"
       [isAudioDisabled]="isAudioDisabled"
       [errors]="errors"

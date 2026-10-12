@@ -6,6 +6,10 @@ export interface SettingsModel {
   useSubfolder: boolean;
   useNamePrefix: boolean;
   showQuality: boolean;
+  /** Asks the app to keep downloads sent from incognito tabs out of its Downloads list. */
+  hideIncognito: boolean;
+  incognitoFolder: boolean;
+  incognitoFolderName: string;
 }
 
 export interface DownloadModel {
@@ -21,6 +25,9 @@ export interface SettingsFormModel {
   useSubfolder: FormControl<boolean>;
   useNamePrefix: FormControl<boolean>;
   showQuality: FormControl<boolean>;
+  hideIncognito: FormControl<boolean>;
+  incognitoFolder: FormControl<boolean>;
+  incognitoFolderName: FormControl<string>;
 }
 
 export interface DownloadFormModel {

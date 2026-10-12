@@ -9,6 +9,8 @@
     #6d4dff 20%,
     #ff5959 25%
   );
+  --mat-tooltip-container-color: var(--mat-sys-primary);
+  --mat-tooltip-supporting-text-color: #000;
 }
 
 @keyframes shadow-outline {

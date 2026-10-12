@@ -73,6 +73,21 @@ function stateOf(
   return 'completed';
 }
 
+/** Overall percent of a running download; a finished playlist entry counts as whole. Null when nothing runs. */
+function progressOf(
+  tracked: Tracked | undefined,
+  rows: ReadonlyMap<number, DownloadModel>,
+): number | null {
+  if (!Array.isArray(tracked) || stateOf(tracked, rows) !== 'processing') return null;
+
+  const total = tracked.reduce((sum, id) => {
+    const row = rows.get(id);
+    if (!row) return sum;
+    return sum + (IN_PROGRESS.has(row.status) ? row.progress : 100);
+  }, 0);
+  return Math.round(total / tracked.length);
+}
+
 @Component({
   imports: [MatButtonModule, MatIcon, Truncate, MatTooltipModule, CardForm, DownloadBtn],
   selector: 'rt-media-card',
@@ -163,11 +178,20 @@ export class MediaCard {
     };
   });
 
+  readonly progress = computed(() => {
+    const tracked = this._tracked();
+    const rows = this._ws.downloads();
+    return {
+      [DownloadType.VIDEO]: progressOf(tracked[DownloadType.VIDEO], rows),
+      [DownloadType.AUDIO]: progressOf(tracked[DownloadType.AUDIO], rows),
+    };
+  });
+
   /** Idle icon per type, swapped for a spinner while the request is being sent; the indicator dot shows the rest. */
   readonly icons = computed(() => {
     const states = this.states();
     const iconOf = (type: DownloadType) =>
-      states[type] === 'requesting' ? 'sync' : IDLE_ICONS[type];
+      states[type] === 'requesting' ? 'loading' : IDLE_ICONS[type];
     return {
       [DownloadType.VIDEO]: iconOf(DownloadType.VIDEO),
       [DownloadType.AUDIO]: iconOf(DownloadType.AUDIO),
@@ -201,9 +225,11 @@ export class MediaCard {
 
   readonly ariaLabels = computed(() => {
     const states = this.states();
+    const progress = this.progress();
     const labelOf = (type: DownloadType) => {
       const state = states[type];
-      return `Send ${TYPE_NAMES[type]}${state ? ` (${STATE_NAMES[state]})` : ''}`;
+      const percent = progress[type] !== null ? ` ${progress[type]}%` : '';
+      return `Send ${TYPE_NAMES[type]}${state ? ` (${STATE_NAMES[state]}${percent})` : ''}`;
     };
     return {
       [DownloadType.VIDEO]: labelOf(DownloadType.VIDEO),

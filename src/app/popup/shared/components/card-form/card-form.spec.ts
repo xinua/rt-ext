@@ -31,6 +31,7 @@ describe('CardForm', () => {
     fixture.componentRef.setInput('isRequesting', false);
     fixture.componentRef.setInput('isAppConnected', true);
     fixture.componentRef.setInput('states', both(null));
+    fixture.componentRef.setInput('progress', both(null));
     fixture.componentRef.setInput('isVideoDisabled', false);
     fixture.componentRef.setInput('isAudioDisabled', false);
     fixture.componentRef.setInput('icons', both('play_circle'));

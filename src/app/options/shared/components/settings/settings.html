@@ -1,3 +1,5 @@
+@let incognitoFolder = form.controls.incognitoFolder.value;
+
 <form class="w-full flex flex-col gap-2" [formGroup]="form">
   <h1 class="text-xl mb-2 font-roboto">Extension settings</h1>
 
@@ -16,40 +18,63 @@
     }
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Extension behavior</mat-label>
-    <mat-select [value]="selectedOptions()" (selectionChange)="onOptionChange($event)" multiple>
-      <mat-select-trigger>
-        @for (option of selectedOptions(); track option) {
-          @let flag = option | flags;
-          @let text = flag.shortLabel;
+  <div [class]="incognitoFolder ? 'grid grid-cols-2 gap-2' : 'w-full'">
+    <mat-form-field appearance="outline" [class]="incognitoFolder ? 'col-span-1' : 'w-full'">
+      <mat-label>Extension behavior</mat-label>
+      <mat-select [value]="selectedOptions()" (selectionChange)="onOptionChange($event)" multiple>
+        <mat-select-trigger>
+          @for (option of selectedOptions(); track option) {
+            @let flag = option | flags;
+            @let text = flag.shortLabel;
 
-          <span class="text-sm list-comma">{{ text }}</span>
-        }
-      </mat-select-trigger>
+            <span class="text-sm list-comma">{{ text }}</span>
+          }
+        </mat-select-trigger>
 
-      @for (option of flags; track option) {
-        <mat-option
-          [value]="option.value"
-          [matTooltip]="option?.tooltip"
-          [matTooltipDisabled]="!option?.tooltip"
-          [matTooltipPosition]="'above'"
-        >
-          <div class="py-1 flex items-center gap-2">
-            <mat-icon [fontIcon]="option.icon" />
+        @for (option of flags; track option) {
+          <mat-option
+            [value]="option.value"
+            [matTooltip]="option?.tooltip"
+            [matTooltipDisabled]="!option?.tooltip || selectedOptions().includes(option.value)"
+            [matTooltipPosition]="'above'"
+          >
+            <div class="py-1 flex items-center gap-2">
+              <mat-icon [fontIcon]="option.icon" />
 
-            <div>
-              <p>{{ option.label }}</p>
+              <div>
+                <p>{{ option.label }}</p>
+              </div>
+
+              @if (selectedOptions().includes(option.value)) {
+                <mat-icon fontIcon="check" class="text-(--rt-accent)! ml-auto" />
+              }
             </div>
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-            @if (selectedOptions().includes(option.value)) {
-              <mat-icon fontIcon="check" class="text-(--rt-accent)! ml-auto" />
-            }
-          </div>
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+    @if (incognitoFolder) {
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>Incognito folder</mat-label>
+        <input
+          matInput
+          formControlName="incognitoFolderName"
+          placeholder="e.g. incognito"
+          type="text"
+          [matAutocomplete]="incognitoFolderName"
+        />
+
+        <mat-autocomplete #incognitoFolderName>
+          @for (folder of folders(); track folder) {
+            <mat-option [value]="folder">
+              {{ folder }}
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    }
+  </div>
 
   <button
     matButton="filled"

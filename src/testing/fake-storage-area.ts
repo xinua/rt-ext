@@ -2,7 +2,7 @@
 // `chrome` global (it does not exist outside the extension).
 
 import { Provider } from '@angular/core';
-import { SESSION_STORAGE_AREA, STORAGE_AREA } from '../app/shared/tokens';
+import { ACTIVE_TAB, SESSION_STORAGE_AREA, STORAGE_AREA } from '../app/shared/tokens';
 
 type Listener = (changes: Record<string, chrome.storage.StorageChange>) => void;
 
@@ -52,10 +52,15 @@ export function createFakeArea(initial: Record<string, unknown> = {}) {
   };
 }
 
-/** Empty local and session areas, for specs that only need the app to boot. */
-export function provideFakeStorage(): Provider[] {
+/** Local and session areas, empty unless given what the local one starts with. */
+export function provideFakeStorage(local: Record<string, unknown> = {}): Provider[] {
   return [
-    { provide: STORAGE_AREA, useValue: createFakeArea().area },
+    { provide: STORAGE_AREA, useValue: createFakeArea(local).area },
     { provide: SESSION_STORAGE_AREA, useValue: createFakeArea().area },
   ];
+}
+
+/** The tab the popup was opened on; none by default. */
+export function provideFakeActiveTab(tab?: Partial<chrome.tabs.Tab>): Provider {
+  return { provide: ACTIVE_TAB, useValue: Promise.resolve(tab) };
 }

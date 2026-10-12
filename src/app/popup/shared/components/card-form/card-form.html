@@ -1,3 +1,5 @@
+@let percent = progress()[form.controls.type.value];
+
 <form [formGroup]="form" class="w-full flex flex-col gap-2 p-2">
   <div class="grid grid-cols-2 gap-2">
     <mat-form-field
@@ -124,11 +126,19 @@
       [matTooltipDisabled]="!hasError"
     >
       @if (isRequesting()) {
-        <mat-icon fontIcon="sync" class="scale-75 leading-none! animate-spin-left" />
+        <mat-icon svgIcon="loading" class="scale-75 leading-none!" />
       }
-      <span [class.text-black]="isProcessing" class="label"
-        >{{ states()[form.controls.type.value] || 'send' | titlecase }}
-      </span>
+
+      @if (isProcessing && percent !== null) {
+        <span class="text-black! tabular-nums" aria-hidden="true">
+          {{ percent < 100 ? percent + '%' : 'Post-processing...' }}
+        </span>
+      } @else {
+        <span [class.text-black]="isProcessing" class="label"
+          >{{ states()[form.controls.type.value] || 'send' | titlecase }}
+        </span>
+      }
+
       <span class="label-error hidden">Send again</span>
     </button>
   </div>

@@ -27,6 +27,22 @@ export const EXT_OPTIONS: SettingsOption[] = [
     label: 'Show quality for videos',
     shortLabel: 'Show quality',
     enabled: true,
-    icon: 'video_library',
+    icon: 'high_quality',
+  },
+  {
+    value: 'hideIncognito',
+    label: 'Hide downloads from Incognito',
+    shortLabel: 'Hide Incognito',
+    tooltip: 'Downloads sent from an incognito tab are not listed in the Retriever app',
+    enabled: true,
+    icon: 'visibility_off',
+  },
+  {
+    value: 'incognitoFolder',
+    label: 'Use special folder for Incognito downloads',
+    shortLabel: 'Incognito folder',
+    tooltip: 'Downloads sent from an incognito tab are stored in a special folder',
+    enabled: true,
+    icon: 'folder',
   },
 ];

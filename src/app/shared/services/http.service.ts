@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Service } from '@angular/core';
 import { catchError, Observable, of, throwError } from 'rxjs';
-import { downloadPayload } from '../../../shared/download';
+import { downloadPayload, requestFlags } from '../../../shared/download';
 import { CardFormValue, DownloadType, FoldersModel } from '../../options/shared/models/forms.model';
 import { DownloadLookup, DownloadResult, DownloadSource } from '../models';
 import { StorageService } from './storage';
@@ -40,6 +40,7 @@ export class HttpService {
     return this._http.post<DownloadResult>(`${this._appUrl()}/api/downloads`, {
       url: source.url,
       ...body,
+      ...requestFlags(this._storage.state(), source),
     });
   }
 }

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OptionsHeader } from './options-header';
 
 describe('OptionsHeader', () => {
-  let component: OptionsHeader;
   let fixture: ComponentFixture<OptionsHeader>;
 
   beforeEach(async () => {
@@ -11,11 +10,11 @@ describe('OptionsHeader', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(OptionsHeader);
-    component = fixture.componentInstance;
     await fixture.whenStable();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('shows the page title', () => {
+    const heading = (fixture.nativeElement as HTMLElement).querySelector('h1');
+    expect(heading?.textContent?.trim()).toBe('Retriever options');
   });
 });

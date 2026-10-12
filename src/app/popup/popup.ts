@@ -52,7 +52,7 @@ export class Popup {
     );
 
     this.pageSources = computed(() =>
-      this.sources()
+      [...this.sources()]
         .reverse()
         .sort((a) => (a.label === this.labels.PAGE || a.label === this.labels.VIDEO_PAGE ? -1 : 1)),
     );

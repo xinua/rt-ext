@@ -26,8 +26,8 @@ export const UNSUCCESSFUL: ReadonlySet<DownloadStatus> = new Set([
   DownloadStatus.CANCELED,
 ]);
 export const IDLE_ICONS: Record<DownloadType, string> = {
-  [DownloadType.VIDEO]: 'play_circle',
-  [DownloadType.AUDIO]: 'audiotrack',
+  [DownloadType.VIDEO]: 'video_circle',
+  [DownloadType.AUDIO]: 'waveform',
 };
 export const INDICATOR_COLORS: Record<DownloadState, string> = {
   requesting: '',

@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LineComponent } from './line';
 
 describe('LineComponent', () => {
-  let component: LineComponent;
   let fixture: ComponentFixture<LineComponent>;
 
   beforeEach(async () => {
@@ -12,11 +11,20 @@ describe('LineComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(LineComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  const wrapper = () => (fixture.nativeElement as HTMLElement).querySelector('.wrapper');
+
+  it('runs to the right by default', () => {
+    expect(wrapper()?.classList).toContain('right');
+  });
+
+  it('runs the way it is told', async () => {
+    fixture.componentRef.setInput('direction', 'left');
+    await fixture.whenStable();
+
+    expect(wrapper()?.classList).toContain('left');
+    expect(wrapper()?.classList).not.toContain('right');
   });
 });

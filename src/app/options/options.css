@@ -1,3 +1,7 @@
+:root {
+  --mat-tooltip-container-color: #ffffff;
+}
+
 html,
 body {
   height: 100%;

@@ -6,7 +6,6 @@ import {
   VideoQuality,
 } from '../../options/shared/models/forms.model';
 import { Nullable } from './common.model';
-import { DownloadSource } from './downloads.model';
 
 export interface DownloadPayload {
   url: string;
@@ -16,6 +15,10 @@ export interface DownloadPayload {
   folder: Nullable<string>;
   prefix: Nullable<string>;
   ytdlpArgs: Nullable<string>;
+  /** Shows the extension icon on the app's download record. */
+  source: 'extension';
+  /** Keeps the record out of the app's Downloads list; sent for incognito tabs. */
+  hidden: boolean;
 }
 
 export interface DownloadResult {
@@ -43,7 +46,10 @@ export interface DownloadModel {
   title: Nullable<string>;
   url: string;
   status: DownloadStatus;
-  source: DownloadSource;
+  /** Who queued it; "extension" for anything this extension sent. */
+  source: 'watcher' | 'manual' | 'telegram' | 'extension';
+  /** Kept out of the app's Downloads list. */
+  hidden: boolean;
   platform: Platform;
   type: Nullable<DownloadType>;
   format: Nullable<VideoFormats | AudioFormats | 'jpg'>;

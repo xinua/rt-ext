@@ -31,6 +31,7 @@ import {
   VideoQuality,
 } from '../../../../options/shared/models/forms.model';
 import { DownloadState } from '../media-card/media-card.model';
+import { downloadFolder } from '../../../../../shared/download';
 
 @Component({
   imports: [
@@ -67,6 +68,7 @@ export class CardForm implements OnInit {
   icons = input.required<Record<DownloadType, string>>();
   indicators = input.required<Record<DownloadType, string>>();
   ariaLabels = input.required<Record<DownloadType, string>>();
+  progress = input.required<Record<DownloadType, number | null>>();
   downloadStarted = output<CardFormValue>();
 
   form = new FormGroup<CardFormModel>({
@@ -95,7 +97,7 @@ export class CardForm implements OnInit {
       this._storage.state()[this.isVideoDisabled() ? 'audioPreset' : 'videoPreset'],
     );
     this.form.controls.folder.setValue(
-      this._storage.state().settings.useSubfolder ? this.source().folder : null,
+      downloadFolder(this._storage.state().settings, this.source()),
     );
     this.form.controls.prefix.setValue(
       this._storage.state().settings.useNamePrefix ? this.source().prefix : null,

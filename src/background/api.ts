@@ -11,7 +11,11 @@ const TYPES: Record<DownloadKind, DownloadType> = {
   audio: DownloadType.AUDIO,
 };
 
-export async function download(pageUrl: string, kind: DownloadKind): Promise<void> {
+export async function download(
+  pageUrl: string,
+  kind: DownloadKind,
+  incognito = false,
+): Promise<void> {
   const storage = await readStorage();
   if (!hasAppUrl(storage)) {
     console.warn('[Retriever] No app URL set in the options; request skipped.');
@@ -22,7 +26,11 @@ export async function download(pageUrl: string, kind: DownloadKind): Promise<voi
   // The menus always mean the one video, even when it was opened from a playlist.
   const url = youTubeVideoUrl(pageUrl) ?? pageUrl;
   const site = siteName(url);
-  const body = downloadPayload(storage, { url, prefix: site, folder: site }, TYPES[kind]);
+  const body = downloadPayload(
+    storage,
+    { url, prefix: site, folder: site, incognito },
+    TYPES[kind],
+  );
   console.log(`[Retriever] Send ${kind}:`, url);
 
   const res = await fetch(`${appUrl}/api/downloads`, {

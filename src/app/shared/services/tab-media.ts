@@ -27,7 +27,8 @@ export class TabMediaService {
   private _key?: MediaKey;
 
   readonly sources = computed<DownloadSource[]>(() => {
-    const pageUrl = this._tab()?.url ?? '';
+    const tab = this._tab();
+    const pageUrl = tab?.url ?? '';
     const folder = siteName(pageUrl);
     const page = pageSources(pageUrl, folder);
     const captured = this._items()
@@ -40,7 +41,8 @@ export class TabMediaService {
         ...(item.referer && { referer: item.referer }),
       }));
 
-    return [...page, ...captured];
+    const sources = [...page, ...captured];
+    return tab?.incognito ? sources.map((source) => ({ ...source, incognito: true })) : sources;
   });
 
   /** Resolves once the active tab's media has been read. */

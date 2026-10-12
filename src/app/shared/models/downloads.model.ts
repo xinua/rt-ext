@@ -7,6 +7,8 @@ export interface DownloadSource {
   thumbnail?: string;
   /** Sent to yt-dlp; CDNs often refuse media requested without the page that embeds it. */
   referer?: string;
+  /** Found on an incognito tab; see `hideIncognito` in the settings. */
+  incognito?: boolean;
 }
 
 export enum Label {

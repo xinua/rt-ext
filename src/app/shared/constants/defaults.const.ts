@@ -16,6 +16,9 @@ export const DEFAULT_SETTINGS: Readonly<SettingsModel> = {
   useSubfolder: false,
   useNamePrefix: false,
   showQuality: true,
+  hideIncognito: false,
+  incognitoFolder: false,
+  incognitoFolderName: '',
 };
 
 export const DEFAULT_VIDEO_PRESET: Readonly<DownloadModel> = {

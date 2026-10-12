@@ -1,3 +1,9 @@
 .label-indicator .mdc-button__label {
   position: unset !important;
 }
+
+.cursor-incognito {
+  cursor:
+    url('/assets/icons/left_hand.svg') 20 2,
+    pointer !important;
+}
