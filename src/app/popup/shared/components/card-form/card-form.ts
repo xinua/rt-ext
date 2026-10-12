@@ -63,6 +63,7 @@ export class CardForm implements OnInit {
   isRequesting = input.required<boolean>();
   isAppConnected = input.required<boolean>();
   states = input.required<Record<DownloadType, DownloadState | null>>();
+  isVideoAvailable = input.required<boolean>();
   isVideoDisabled = input.required<boolean>();
   isAudioDisabled = input.required<boolean>();
   icons = input.required<Record<DownloadType, string>>();
@@ -94,7 +95,7 @@ export class CardForm implements OnInit {
 
   ngOnInit() {
     this.form.patchValue(
-      this._storage.state()[this.isVideoDisabled() ? 'audioPreset' : 'videoPreset'],
+      this._storage.state()[!this.isVideoAvailable() ? 'audioPreset' : 'videoPreset'],
     );
     this.form.controls.folder.setValue(
       downloadFolder(this._storage.state().settings, this.source()),

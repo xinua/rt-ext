@@ -79,6 +79,31 @@ export function detectMedia(response: MediaResponse): Omit<MediaItem, 'detectedA
   return { url: response.url, kind, mime, size };
 }
 
+/**
+ * Whether a response is a piece of a stream being played: an HLS/DASH segment,
+ * or a media file an MSE player fetched by XHR. Segments are what tell which
+ * captured manifest is playing.
+ */
+export function isSegment(response: MediaResponse): boolean {
+  if (response.statusCode < 200 || response.statusCode >= 300) return false;
+
+  let url: URL;
+  try {
+    url = new URL(response.url);
+  } catch {
+    return false;
+  }
+  if (!url.protocol.startsWith('http')) return false;
+
+  const extension = url.pathname.split('.').pop()?.toLowerCase() ?? '';
+  if (SEGMENT_EXTENSIONS.has(extension)) return true;
+  if (response.type !== 'xmlhttprequest') return false;
+
+  const mime = header(response, 'content-type')?.split(';')[0].trim().toLowerCase();
+  const kind = (mime && MIME_TYPES[mime]) || EXTENSIONS[extension];
+  return kind === 'video' || kind === 'audio';
+}
+
 function header(response: MediaResponse, name: string): string | undefined {
   return response.responseHeaders?.find((h) => h.name.toLowerCase() === name)?.value;
 }

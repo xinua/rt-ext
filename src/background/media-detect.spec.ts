@@ -1,4 +1,4 @@
-import { detectMedia, MIN_FILE_SIZE, type MediaResponse } from './media-detect';
+import { detectMedia, isSegment, MIN_FILE_SIZE, type MediaResponse } from './media-detect';
 
 function response(overrides: Partial<MediaResponse> & { headers?: Record<string, string> }) {
   const { headers = {}, ...rest } = overrides;
@@ -94,5 +94,39 @@ describe('detectMedia', () => {
     expect(
       detectMedia(response({ url: 'https://rr1---sn-abc.googlevideo.com/videoplayback.mp4' })),
     ).toBeNull();
+  });
+});
+
+describe('isSegment', () => {
+  it('recognizes HLS and DASH segments', () => {
+    expect(
+      isSegment(response({ url: 'https://cdn.example.com/x/720.mp4:hls:seg-1-v1-a1.ts' })),
+    ).toBe(true);
+    expect(isSegment(response({ url: 'https://cdn.example.com/x/fragment-6-f4-a1-x3.m4s' }))).toBe(
+      true,
+    );
+  });
+
+  it('counts media files fetched by XHR, which MSE players load as segments', () => {
+    expect(isSegment(response({ type: 'xmlhttprequest' }))).toBe(true);
+    expect(
+      isSegment(
+        response({
+          url: 'https://cdn.example.com/chunk?n=1',
+          type: 'xmlhttprequest',
+          headers: { 'Content-Type': 'video/mp4' },
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it('ignores manifests, files loaded by media elements and failed responses', () => {
+    expect(
+      isSegment(response({ url: 'https://cdn.example.com/index.m3u8', type: 'xmlhttprequest' })),
+    ).toBe(false);
+    expect(isSegment(response({}))).toBe(false);
+    expect(isSegment(response({ url: 'https://cdn.example.com/seg-1.ts', statusCode: 404 }))).toBe(
+      false,
+    );
   });
 });

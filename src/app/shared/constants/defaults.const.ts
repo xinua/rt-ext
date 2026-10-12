@@ -18,6 +18,7 @@ export const DEFAULT_SETTINGS: Readonly<SettingsModel> = {
   showQuality: true,
   hideIncognito: false,
   incognitoFolder: false,
+  mostRecent: false,
   incognitoFolderName: '',
 };
 

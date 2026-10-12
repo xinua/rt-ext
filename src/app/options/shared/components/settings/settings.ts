@@ -65,6 +65,7 @@ export class Settings implements OnInit {
     hideIncognito: new FormControl<boolean>(false, { nonNullable: true }),
     incognitoFolder: new FormControl<boolean>(false, { nonNullable: true }),
     incognitoFolderName: new FormControl<string>('', { nonNullable: true }),
+    mostRecent: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   selectedOptions = computed(

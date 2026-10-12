@@ -129,11 +129,13 @@ export class MediaCard {
     // Keep whatever was clicked while the lookup was still in flight.
     computation: (lookup, previous) => ({ ...trackedFrom(lookup), ...previous?.value }),
   });
+
   readonly isCopying = signal(false);
   readonly showForm = signal(false);
 
   readonly useFolder = computed(() => this._storage.state().settings.useSubfolder);
   readonly usePrefix = computed(() => this._storage.state().settings.useNamePrefix);
+  readonly mostRecentSetting = computed(() => this._storage.state().settings.mostRecent);
 
   /** Qualities a stream's manifest lists; idle for anything that isn't a stream. */
   private readonly _manifestQualities = resource({

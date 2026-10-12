@@ -10,6 +10,7 @@ export interface SettingsModel {
   hideIncognito: boolean;
   incognitoFolder: boolean;
   incognitoFolderName: string;
+  mostRecent: boolean;
 }
 
 export interface DownloadModel {
@@ -28,6 +29,7 @@ export interface SettingsFormModel {
   hideIncognito: FormControl<boolean>;
   incognitoFolder: FormControl<boolean>;
   incognitoFolderName: FormControl<string>;
+  mostRecent: FormControl<boolean>;
 }
 
 export interface DownloadFormModel {

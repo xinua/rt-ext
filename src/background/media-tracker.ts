@@ -4,8 +4,8 @@
 // listeners start receiving events as soon as it is granted.
 
 import { ext } from '../shared/ext';
-import { detectMedia } from './media-detect';
-import { addMedia, forgetMedia, resetMedia } from './media-store';
+import { detectMedia, isSegment } from './media-detect';
+import { addMedia, forgetMedia, markPlaying, resetMedia } from './media-store';
 
 const FILTER: chrome.webRequest.RequestFilter = {
   urls: ['<all_urls>'],
@@ -34,8 +34,17 @@ export function registerMediaTracker(): void {
       referers.delete(details.requestId);
       if (details.tabId < 0) return;
 
+      const { tabId, frameId } = details;
       const media = detectMedia(details);
-      if (media) void addMedia(details.tabId, { ...media, referer, detectedAt: Date.now() });
+      if (media) {
+        const added = addMedia(tabId, { ...media, referer, frameId, detectedAt: Date.now() });
+        // A media element loading a file is playing it; a manifest is often only preloaded.
+        if (media.kind === 'video' || media.kind === 'audio') {
+          void added.then(() => markPlaying(tabId, media.url, frameId));
+        }
+      } else if (isSegment(details)) {
+        void markPlaying(tabId, details.url, frameId);
+      }
     },
     FILTER,
     ['responseHeaders'],

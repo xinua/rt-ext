@@ -120,6 +120,21 @@ describe('TabMediaService', () => {
     expect(service.sources()[0].referer).toBe('https://player.net/e/1');
   });
 
+  it('flags the playing source', async () => {
+    const service = setup(
+      { id: 7, url: 'https://yummyanime.tv/1.html' },
+      {
+        'media:7': [
+          { ...item('https://ceramet.net/1/index.m3u8'), playing: false },
+          { ...item('https://ceramet.net/2/index.m3u8'), playing: true },
+        ],
+      },
+    );
+    await service.ready;
+
+    expect(service.sources().map((source) => source.playing)).toEqual([undefined, true]);
+  });
+
   it('lists a page captured as media only once', async () => {
     const service = setup(
       { id: 7, url: 'https://vimeo.com/a.mp4' },

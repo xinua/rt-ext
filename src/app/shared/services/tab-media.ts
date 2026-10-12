@@ -39,6 +39,7 @@ export class TabMediaService {
         prefix: siteName(item.url),
         folder,
         ...(item.referer && { referer: item.referer }),
+        ...(item.playing && { playing: true }),
       }));
 
     const sources = [...page, ...captured];

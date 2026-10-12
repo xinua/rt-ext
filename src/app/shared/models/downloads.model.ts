@@ -9,6 +9,8 @@ export interface DownloadSource {
   referer?: string;
   /** Found on an incognito tab; see `hideIncognito` in the settings. */
   incognito?: boolean;
+  /** The tab's most recently played source, judged by its segment requests. */
+  playing?: boolean;
 }
 
 export enum Label {

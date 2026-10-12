@@ -5,6 +5,7 @@
 
 import { ext } from '../shared/ext';
 import { mediaKey, type MediaItem } from '../shared/media';
+import { findPlaying } from './media-playing';
 
 const FLUSH_DELAY = 250;
 const MAX_ITEMS_PER_TAB = 50;
@@ -22,6 +23,29 @@ export async function addMedia(tabId: number, item: MediaItem): Promise<void> {
 
   items.push(item);
   if (items.length > MAX_ITEMS_PER_TAB) items.shift();
+  scheduleFlush(tabId);
+}
+
+/**
+ * Marks the source a played segment belongs to. Segments arrive every few
+ * seconds, so only a change of the playing source is written.
+ */
+export async function markPlaying(
+  tabId: number,
+  segmentUrl: string,
+  frameId?: number,
+): Promise<void> {
+  const items = await load(tabId);
+  if (cache.get(tabId) !== items) return;
+
+  const index = findPlaying(items, segmentUrl, frameId);
+  if (index < 0 || items[index].playing) return;
+
+  // New objects, so a pending write never sees a half-moved mark.
+  items.forEach((item, i) => {
+    if (i === index) items[i] = { ...item, playing: true };
+    else if (item.playing) items[i] = { ...item, playing: false };
+  });
   scheduleFlush(tabId);
 }
 

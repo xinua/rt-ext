@@ -117,6 +117,14 @@
           />
         }
       </div>
+
+      @if (source().playing && mostRecentSetting()) {
+        <div
+          class="col-span-2 border-t border-white/10 pt-2 text-center select-none text-white/70 motion-safe:animate-pulse"
+        >
+          <span>Most recently played</span>
+        </div>
+      }
     </footer>
   }
 
@@ -127,6 +135,7 @@
       [isAppConnected]="isAppConnected()"
       [states]="states()"
       [progress]="progress()"
+      [isVideoAvailable]="source().label !== labels.AUDIO"
       [isVideoDisabled]="isVideoDisabled"
       [isAudioDisabled]="isAudioDisabled"
       [errors]="errors"

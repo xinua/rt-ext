@@ -11,6 +11,10 @@ export interface MediaItem {
   size?: number;
   /** The frame that requested the media; many CDNs refuse requests without it. */
   referer?: string;
+  /** The frame whose player requested it; its segments come from the same one. */
+  frameId?: number;
+  /** The tab's most recently played source, judged by the segments it requests. */
+  playing?: boolean;
   detectedAt: number;
 }
 

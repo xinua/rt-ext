@@ -14,7 +14,7 @@
         </mat-select-trigger>
 
         @for (type of downloadTypes; track type) {
-          @let isDisabled = type === downloadType.VIDEO && isVideoDisabled();
+          @let isDisabled = type === downloadType.VIDEO && !isVideoAvailable();
           <mat-option [value]="type" [disabled]="isDisabled">{{ type | titlecase }}</mat-option>
         }
       </mat-select>
