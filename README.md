@@ -75,34 +75,31 @@ Full details in the [privacy policy](PRIVACY.md).
 
 ## 🚀 Installation
 
-> The extension isn't in the Chrome Web Store or on AMO yet, so for now it's a **manual install**.
+> You need a running [Retriever](https://github.com/xinua/retriever#-quick-start) first.
+> The Chrome version isn't in the Chrome Web Store yet, so for now it's a **manual install**.
 
-You need a running [Retriever](https://github.com/xinua/retriever#-quick-start) first.
+### Download latest version
 
-### Download latest version from Release assets
+> You always can find Download button in Retriever -> App settings -> "Extension" tab.
 
-Click to download extension for [Chrome](https://github.com/xinua/rt-ext/releases/latest/download/chrome.zip) or [Firefox](https://github.com/xinua/rt-ext/releases/latest/download/firefox.zip).
-You always can find Download button in Retriever -> App settings -> "Extension" tab.
+#### Chrome
 
-### Chrome
+1. Click to download extension for [Chrome](https://github.com/xinua/rt-ext/releases/latest/download/chrome.zip)
+2. Open `chrome://extensions`
+3. Turn on **Developer mode** (top right)
+4. Click **Load unpacked** and pick `dist/chrome`
 
-1. Open `chrome://extensions`
-2. Turn on **Developer mode** (top right)
-3. Click **Load unpacked** and pick `dist/chrome`
+#### Firefox
 
-### Firefox
+The extension is available to install from [Firefox official Store](https://addons.mozilla.org/en-US/firefox/addon/retriever-ext/).
 
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click **Load Temporary Add-on…** and pick any file inside `dist/firefox` (e.g. `manifest.json`)
-
-Temporary add-ons are removed when Firefox restarts. Or just run `pnpm start:firefox` to launch a Firefox profile with the extension loaded.  
-**The extension will be available to install from Firefox official Store soon.**
+---
 
 ### First run
 
 The options page opens on its own after install:
 
-1. Enter your Retriever address, e.g. `http://192.168.1.50:31080`
+1. Enter your Retriever address, e.g. `http://192.168.x.xx:31080`
 2. Let the browser grant access to that address when asked — that's how the app bridge talks to the app
 3. Tune your video and audio presets
 
