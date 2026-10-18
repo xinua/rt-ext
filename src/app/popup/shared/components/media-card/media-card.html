@@ -1,10 +1,16 @@
 @let isVideoDisabled =
   !isAppConnected() ||
+  isDrm() ||
+  isLive() ||
   states().video === 'requesting' ||
   states().video === 'processing' ||
   source().label === labels.AUDIO;
 @let isAudioDisabled =
-  !isAppConnected() || states().audio === 'requesting' || states().audio === 'processing';
+  !isAppConnected() ||
+  isDrm() ||
+  isLive() ||
+  states().audio === 'requesting' ||
+  states().audio === 'processing';
 @let hasDone = states().video === 'completed' || states().audio === 'completed';
 
 <section
@@ -13,7 +19,9 @@
 >
   <header class="p-2 flex flex-col gap-2">
     <div class="flex items-center gap-2">
-      <p [rtTruncate]="10" [truncateMaxLength]="45">{{ source().url }}</p>
+      <a [rtTruncate]="10" [truncateMaxLength]="45" [href]="source().url" target="_blank">{{
+        source().url
+      }}</a>
 
       <button
         type="button"
@@ -43,20 +51,62 @@
         <small
           class="uppercase tracking-wide ring-1 px-2 rounded-lg {{
             badgeColor()
-          }} whitespace-nowrap w-fit h-fit py-0.5"
-          >{{ label }}</small
+          }} whitespace-nowrap w-fit h-fit py-0.5 flex items-start gap-1"
+        >
+          <span class="sr-only">Source type </span>
+          <mat-icon
+            [fontIcon]="labelIcons[label]"
+            class="text-sm! h-4! w-4!"
+            [class]="labelIconColors[label]"
+          ></mat-icon>
+          {{ label }}
+        </small>
+      }
+
+      @if (isLive()) {
+        <small
+          class="uppercase tracking-wide ring-1 px-2 py-0.5 rounded-lg ring-red-500/70 bg-red-500/15 text-red-500 whitespace-nowrap"
+          >Live</small
         >
       }
 
-      @if (source().label !== labels.AUDIO) {
-        <div class="flex items-center gap-2 max-w-65 overflow-x-auto p-0.5">
-          @for (quality of qualities(); track quality) {
-            <small class="w-fit tracking-wide ring-1 px-2 rounded-lg bg-green-500/10 text-green-500"
-              >{{ quality }}p</small
-            >
-          }
-        </div>
+      @if (isDrm()) {
+        <small
+          class="tracking-wide ring-1 px-2 py-0.5 rounded-lg ring-white/40 bg-white/10 text-white whitespace-nowrap cursor-help"
+          tabindex="0"
+          matTooltip="Encrypted stream, unable to download"
+          matTooltipPosition="above"
+          ><span class="sr-only">Encrypted stream </span>DRM</small
+        >
       }
+
+      @if (duration(); as duration) {
+        <small
+          class="tracking-wide ring-1 px-2 py-0.5 rounded-lg ring-white/30 bg-white/5 text-white tabular-nums whitespace-nowrap flex items-start gap-1"
+        >
+          <mat-icon fontIcon="access_time" class="text-sm! h-4! w-4! text-white/70!"></mat-icon>
+          <span class="sr-only">Duration </span>
+          {{ duration }}
+        </small>
+      }
+
+      @if (maxQuality()) {
+        <small
+          class="tracking-wide ring-1 px-2 py-0.5 rounded-lg ring-green-500/50 bg-green-500/10 text-green-500 tabular-nums whitespace-nowrap ml-auto flex items-start gap-1"
+        >
+          <mat-icon fontIcon="video_settings" class="text-sm! h-4! w-4! text-green-500!"></mat-icon>
+          <span class="sr-only">Max Quality </span>
+          {{ maxQuality() }}p
+        </small>
+      }
+
+      <!-- <div class="flex items-center gap-2 max-w-40 overflow-x-auto p-0.5 ml-auto">
+        @for (quality of qualities(); track quality) {
+          <small class="w-fit tracking-wide ring-1 px-2 rounded-lg bg-green-500/10 text-green-500"
+            >{{ quality }}p</small
+          >
+        }
+      </div> -->
     </div>
   </header>
 
@@ -72,7 +122,7 @@
   }
 
   @if (!showForm()) {
-    <footer class="grid grid-cols-2 gap-2 items-center p-2">
+    <footer class="grid grid-cols-[1fr_auto] gap-2 items-center p-2">
       <div class="flex items-center gap-2">
         @if (displayIndex(); as position) {
           <div
@@ -84,19 +134,19 @@
         }
 
         <div class="flex flex-col gap-1 justify-between text-xs">
-          @if (useFolder()) {
-            <p>
-              <span>Folder:</span>
-              <span class="ml-2">{{ source().folder }}</span>
-            </p>
-          }
+          <p>
+            <span>Prefix:</span>
+            <span class="ml-2 w-full truncate">{{ usePrefix() ? source().prefix : '—' }}</span>
+            @if (!usePrefix()) {
+              <span class="sr-only">None</span>
+              <!-- <span class="truncate opacity-40 font-zinco uppercase text-shadow-[0px_2px_0px_rgba(255,255,255,0.1)]">none</span> -->
+            }
+          </p>
 
-          @if (usePrefix()) {
-            <p>
-              <span>Prefix:</span>
-              <span class="ml-2 w-full truncate">{{ source().prefix }}</span>
-            </p>
-          }
+          <p>
+            <span>Folder:</span>
+            <span class="ml-2 text-red-500">{{ downloadFolder() || '/' }}</span>
+          </p>
         </div>
       </div>
 

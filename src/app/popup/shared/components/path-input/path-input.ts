@@ -249,7 +249,10 @@ export class PathInput implements ControlValueAccessor, AfterContentInit {
 
   /** The downloads folder setting as the listing paths read: "" for the root, which has nothing to lead to. */
   private readonly _downloadsFolder = toSignal(
-    this._http.getAppSettings().pipe(map((settings) => settings.downloadsDir)),
+    this._http
+      .getAppSettings()
+      // `/movies/` reads as `movies`, `/` as "": slashes are trimmed and collapsed like a typed path.
+      .pipe(map((settings) => splitPath(`${settings.downloadsDir ?? ''}/`).dir)),
   );
 
   /** A note at the end of the panel about what typing on will do. */

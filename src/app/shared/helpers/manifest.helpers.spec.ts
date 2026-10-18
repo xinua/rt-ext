@@ -1,4 +1,15 @@
-import { parseDash, parseHls, qualitiesOf, qualityOf, urlQualities } from './manifest.helpers';
+import {
+  formatDuration,
+  hlsTimeline,
+  hlsVariantUrl,
+  isHlsDrm,
+  parseDash,
+  parseDashInfo,
+  parseHls,
+  qualitiesOf,
+  qualityOf,
+  urlQualities,
+} from './manifest.helpers';
 
 const HLS = `#EXTM3U
 #EXT-X-STREAM-INF:RESOLUTION=1920x1080,BANDWIDTH=2128000
@@ -115,5 +126,100 @@ describe('parseDash', () => {
 
   it('returns nothing for invalid XML', () => {
     expect(parseDash('<MPD><Period>')).toEqual([]);
+  });
+});
+
+describe('parseDashInfo', () => {
+  it('reads the length of a static MPD', () => {
+    expect(parseDashInfo(DASH)).toEqual({
+      qualities: [1080, 720, 480],
+      duration: 1426.64,
+      live: false,
+      drm: false,
+    });
+  });
+
+  it('marks a dynamic MPD live, without a length', () => {
+    const mpd = `<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" type="dynamic" mediaPresentationDuration="PT1H"><Period/></MPD>`;
+    expect(parseDashInfo(mpd)).toEqual({ qualities: [], live: true, drm: false });
+  });
+
+  it('reads days, hours and minutes', () => {
+    const mpd = `<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" mediaPresentationDuration="P1DT1H2M3.5S"><Period/></MPD>`;
+    expect(parseDashInfo(mpd).duration).toBe(86400 + 3723.5);
+  });
+
+  it('flags DRM only when every video set is protected', () => {
+    const protectedSet = `<AdaptationSet mimeType="video/mp4"><ContentProtection schemeIdUri="urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"/><Representation id="1" width="1920" height="1080"/></AdaptationSet>`;
+    const clearSet = `<AdaptationSet mimeType="video/mp4"><Representation id="2" width="1280" height="720"/></AdaptationSet>`;
+    const mpd = (sets: string) =>
+      `<MPD xmlns="urn:mpeg:dash:schema:mpd:2011"><Period>${sets}</Period></MPD>`;
+
+    expect(parseDashInfo(mpd(protectedSet)).drm).toBe(true);
+    expect(parseDashInfo(mpd(protectedSet + clearSet)).drm).toBe(false);
+  });
+
+  it('returns nothing for invalid XML', () => {
+    expect(parseDashInfo('<MPD><Period>')).toEqual({ qualities: [], live: false, drm: false });
+  });
+});
+
+describe('hlsVariantUrl', () => {
+  it('resolves the first variant against the master URL', () => {
+    expect(hlsVariantUrl(HLS_REORDERED, 'https://cdn.example.com/v/master.m3u8')).toBe(
+      'https://cdn.example.com/v/240.mp4:hls:manifest.m3u8',
+    );
+  });
+
+  it('finds none in a media playlist', () => {
+    expect(hlsVariantUrl('#EXTM3U\n#EXTINF:10,\nseg-1.ts\n', 'https://cdn.example.com/')).toBe(
+      null,
+    );
+  });
+});
+
+describe('hlsTimeline', () => {
+  it('adds up the segments of a finished playlist', () => {
+    expect(
+      hlsTimeline('#EXTM3U\n#EXTINF:10.0,\na.ts\n#EXTINF:9.5,title\nb.ts\n#EXT-X-ENDLIST\n'),
+    ).toEqual({ duration: 19.5, live: false });
+  });
+
+  it('marks a playlist without an end live', () => {
+    expect(hlsTimeline('#EXTM3U\n#EXTINF:6.0,\na.ts\n#EXTINF:6.0,\nb.ts\n')).toEqual({
+      live: true,
+    });
+  });
+
+  it('knows nothing from a master playlist', () => {
+    expect(hlsTimeline(HLS)).toEqual({ live: false });
+  });
+});
+
+describe('isHlsDrm', () => {
+  it('flags FairPlay, Widevine and PlayReady keys', () => {
+    expect(isHlsDrm('#EXT-X-KEY:METHOD=SAMPLE-AES,URI="skd://key-id",KEYFORMATVERSIONS="1"')).toBe(
+      true,
+    );
+    expect(
+      isHlsDrm(
+        '#EXT-X-SESSION-KEY:METHOD=SAMPLE-AES-CTR,URI="data:...",KEYFORMAT="urn:uuid:EDEF8BA9-79D6-4ACE-A3C8-27DCD51D21ED"',
+      ),
+    ).toBe(true);
+    expect(
+      isHlsDrm('#EXT-X-KEY:METHOD=SAMPLE-AES,KEYFORMAT="com.microsoft.playready",URI="x"'),
+    ).toBe(true);
+  });
+
+  it('lets plain AES-128 through', () => {
+    expect(isHlsDrm('#EXT-X-KEY:METHOD=AES-128,URI="https://cdn.example.com/key.bin"')).toBe(false);
+  });
+});
+
+describe('formatDuration', () => {
+  it('shows hours only when there are any', () => {
+    expect(formatDuration(245)).toBe('4:05');
+    expect(formatDuration(3723.4)).toBe('1:02:03');
+    expect(formatDuration(59.6)).toBe('1:00');
   });
 });

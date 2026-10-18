@@ -90,7 +90,7 @@ export class CardForm implements OnInit {
       this._storage.state()[!this.isVideoAvailable() ? 'audioPreset' : 'videoPreset'],
     );
     this.form.controls.folder.setValue(
-      downloadFolder(this._storage.state().settings, this.source()),
+      downloadFolder(this._storage.state().settings, this._storage.state().app, this.source()),
     );
     this.form.controls.prefix.setValue(
       this._storage.state().settings.useNamePrefix ? this.source().prefix : null,

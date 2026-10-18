@@ -30,7 +30,7 @@
       @for (source of pageSources(); track source.url) {
         <rt-media-card
           [source]="source"
-          [index]="sources().length - $index - 1"
+          [index]="pageSources().length - $index - 1"
           (downloadStarted)="handleDownload()"
           [isAppConnected]="!!isConnected"
         />

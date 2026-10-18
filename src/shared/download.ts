@@ -1,6 +1,10 @@
 // The body of POST /api/downloads, built from the stored presets and settings.
 // Shared by the popup and the background worker so both send the same thing.
-import { DownloadType, type SettingsModel } from '../app/options/shared/models/forms.model';
+import {
+  AppModel,
+  DownloadType,
+  type SettingsModel,
+} from '../app/options/shared/models/forms.model';
 import type { DownloadPayload, DownloadSource, StorageModel } from '../app/shared/models';
 
 export function downloadPayload(
@@ -12,7 +16,7 @@ export function downloadPayload(
   return {
     url: source.url,
     ...(type === DownloadType.VIDEO ? storage.videoPreset : storage.audioPreset),
-    folder: downloadFolder(settings, source),
+    folder: downloadFolder(settings, storage.app, source),
     prefix: settings.useNamePrefix ? source.prefix : null,
     // The server splits these like a shell does, so the quotes keep the URL one argument.
     ytdlpArgs: source.referer ? `--referer "${source.referer}"` : null,
@@ -25,10 +29,15 @@ export function downloadPayload(
  * when one is set, otherwise the site subfolder when that is on. The popup's
  * form starts from this too, and whatever the user picks there wins.
  */
-export function downloadFolder(settings: SettingsModel, source: DownloadSource): string | null {
+export function downloadFolder(
+  settings: SettingsModel,
+  app: AppModel,
+  source: DownloadSource,
+): string | null {
   const incognitoFolder = settings.incognitoFolder && settings.incognitoFolderName?.trim();
   if (source.incognito && incognitoFolder) return incognitoFolder;
-  return settings.useSubfolder ? source.folder : null;
+  const folder = settings.useSubfolder ? source.folder : app.defaultFolder;
+  return folder ? (folder.endsWith('/') ? folder : folder + '/') : null;
 }
 
 /** What every request from the extension carries, whatever its options. */

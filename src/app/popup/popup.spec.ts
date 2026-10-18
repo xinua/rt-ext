@@ -3,7 +3,14 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { DownloadSource, HttpService, Label, StorageService, TabMediaService } from '@shared';
+import {
+  DownloadSource,
+  HttpService,
+  Label,
+  MediaDurationService,
+  StorageService,
+  TabMediaService,
+} from '@shared';
 import { of } from 'rxjs';
 import type { MockInstance } from 'vitest';
 import { DEFAULT_SETTINGS } from '../shared/constants';
@@ -76,6 +83,8 @@ describe('Popup', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: TabMediaService, useValue: { sources: signal(sources) } },
+        // The test DOM never loads media, so a file's length would never arrive.
+        { provide: MediaDurationService, useValue: { duration: () => Promise.resolve(null) } },
       ],
     }).compileComponents();
 
@@ -170,7 +179,7 @@ describe('Popup', () => {
       const second = source('https://cdn.example.com/second.mp4', Label.VIDEO);
       await setup({ sources: [first, second] });
 
-      expect(component.sources()).toEqual([first, second]);
+      expect(TestBed.inject(TabMediaService).sources()).toEqual([first, second]);
     });
 
     it('numbers the captured media in the order they were found', async () => {

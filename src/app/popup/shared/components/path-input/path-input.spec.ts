@@ -3,10 +3,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Observable, of, Subject, throwError } from 'rxjs';
-import { FolderListingModel } from '../../models/settings.model';
-import { HttpService } from '../../services/http.service';
-import { StorageService } from '../../services/storage.service';
+import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
+import { FolderType, FoldersModel } from '../../../../options/shared/models/forms.model';
+import { AppSettingsModel } from '../../../../options/shared/components/settings/settings.model';
+import { HttpService } from '@shared';
+import { provideFakeStorage } from '../../../../../testing/fake-storage-area';
 
 import { PathInput, splitPath } from './path-input';
 
@@ -37,23 +38,23 @@ class HostComponent {
 
 const listing = (
   path: string,
-  entries: FolderListingModel['entries'],
+  entries: FoldersModel['entries'],
   truncated = false,
-): FolderListingModel => ({
+): FoldersModel => ({
   path,
   entries,
   truncated,
 });
 
 const ROOT = listing('', [
-  { name: 'anime', type: 'folder', mount: false },
-  { name: 'movies', type: 'folder', mount: true },
-  { name: 'notes.txt', type: 'file', mount: false },
+  { name: 'anime', type: FolderType.FOLDER, mount: false },
+  { name: 'movies', type: FolderType.FOLDER, mount: true },
+  { name: 'notes.txt', type: FolderType.FILE, mount: false },
 ]);
 
 const ANIME = listing('anime', [
-  { name: 'Naruto', type: 'folder', mount: false },
-  { name: 'One Piece', type: 'folder', mount: false },
+  { name: 'Naruto', type: FolderType.FOLDER, mount: false },
+  { name: 'One Piece', type: FolderType.FOLDER, mount: false },
 ]);
 
 describe('splitPath', () => {
@@ -74,6 +75,8 @@ describe('PathInput', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
   let getFolder: ReturnType<typeof vi.fn>;
+  /** The app's settings; the downloads folder among them is offered first. */
+  let appSettings: BehaviorSubject<AppSettingsModel>;
 
   beforeEach(async () => {
     vi.useFakeTimers();
@@ -84,10 +87,17 @@ describe('PathInput', () => {
 
       return throwError(() => ({ status: 404 }));
     });
+    appSettings = new BehaviorSubject({ downloadsDir: '' } as AppSettingsModel);
 
     await TestBed.configureTestingModule({
       imports: [HostComponent],
-      providers: [{ provide: HttpService, useValue: { getFolder } }],
+      providers: [
+        provideFakeStorage(),
+        {
+          provide: HttpService,
+          useValue: { getFolder, getAppSettings: () => appSettings.asObservable() },
+        },
+      ],
     }).compileComponents();
 
     // The pending status uses a registered SVG icon; a blank one resolves it.
@@ -144,10 +154,7 @@ describe('PathInput', () => {
 
   describe('with a downloads folder set', () => {
     const downloadsDir = (value: string) =>
-      TestBed.inject(StorageService).settings.update((settings) => ({
-        ...settings,
-        downloadsDir: value,
-      }));
+      appSettings.next({ ...appSettings.value, downloadsDir: value });
 
     it('puts it first, marked', async () => {
       downloadsDir('/movies/');

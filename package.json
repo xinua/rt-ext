@@ -1,6 +1,6 @@
 {
   "name": "rt-ext",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "scripts": {
     "ng": "ng",
     "dev": "node scripts/dev.mjs --target=chrome",

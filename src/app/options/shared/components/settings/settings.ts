@@ -63,6 +63,7 @@ export class Settings implements OnInit {
     openApp: new FormControl<boolean>(false, { nonNullable: true }),
     useSubfolder: new FormControl<boolean>(false, { nonNullable: true }),
     useNamePrefix: new FormControl<boolean>(false, { nonNullable: true }),
+    showPage: new FormControl<boolean>(true, { nonNullable: true }),
     showQuality: new FormControl<boolean>(false, { nonNullable: true }),
     hideIncognito: new FormControl<boolean>(false, { nonNullable: true }),
     incognitoFolder: new FormControl<boolean>(false, { nonNullable: true }),

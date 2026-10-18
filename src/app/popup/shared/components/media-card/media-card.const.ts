@@ -2,7 +2,25 @@ import { DownloadStatus, Label } from '@shared';
 import { DownloadType } from '../../../../options/shared/models/forms.model';
 import { DownloadState } from './media-card.model';
 
-export const LabelColor: Record<Label, string> = {
+export const LabelIconColors: Record<Label, string> = {
+  [Label.PAGE]: 'text-white!',
+  [Label.VIDEO_PAGE]: 'text-red-500!',
+  [Label.PLAYLIST]: 'text-blue-500',
+  [Label.HLS]: 'text-yellow-500!',
+  [Label.DASH]: 'text-purple-500!',
+  [Label.VIDEO]: 'text-orange-400!',
+  [Label.AUDIO]: 'text-pink-500!',
+};
+export const LABEL_ICONS: Record<Label, string> = {
+  [Label.PAGE]: 'web',
+  [Label.VIDEO_PAGE]: 'movie',
+  [Label.PLAYLIST]: 'playlist_play',
+  [Label.HLS]: 'stream',
+  [Label.DASH]: 'stream',
+  [Label.VIDEO]: 'play_arrow',
+  [Label.AUDIO]: 'music_note',
+};
+export const LabelClasses: Record<Label, string> = {
   [Label.PAGE]: 'ring-red-500/70 bg-red-500/15 text-red-500',
   [Label.VIDEO_PAGE]: 'ring-red-500/70 bg-red-500/15 text-red-500',
   [Label.PLAYLIST]: 'ring-blue-500/70 bg-blue-500/15 text-blue-500',

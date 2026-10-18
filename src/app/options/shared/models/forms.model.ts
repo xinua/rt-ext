@@ -1,10 +1,15 @@
 import { FormControl } from '@angular/forms';
 
+export interface AppModel {
+  defaultFolder: string | null;
+}
+
 export interface SettingsModel {
   appUrl: string;
   openApp: boolean;
   useSubfolder: boolean;
   useNamePrefix: boolean;
+  showPage: boolean;
   showQuality: boolean;
   /** Asks the app to keep downloads sent from incognito tabs out of its Downloads list. */
   hideIncognito: boolean;
@@ -25,6 +30,7 @@ export interface SettingsFormModel {
   openApp: FormControl<boolean>;
   useSubfolder: FormControl<boolean>;
   useNamePrefix: FormControl<boolean>;
+  showPage: FormControl<boolean>;
   showQuality: FormControl<boolean>;
   hideIncognito: FormControl<boolean>;
   incognitoFolder: FormControl<boolean>;

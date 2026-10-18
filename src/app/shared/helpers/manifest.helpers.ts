@@ -3,6 +3,19 @@ export interface Resolution {
   height: number;
 }
 
+/** What a stream's manifest tells about it. */
+export interface StreamInfo {
+  /** Qualities ("p") it offers, best first. */
+  qualities: number[];
+  /** Length in seconds; absent for live streams and when the manifest doesn't say. */
+  duration?: number;
+  live: boolean;
+  /** Locked by a DRM system, which no downloader can decrypt. */
+  drm: boolean;
+}
+
+export const NO_STREAM_INFO: StreamInfo = { qualities: [], live: false, drm: false };
+
 /** Standard frame sizes, best first; `p` is the label a size is shown as. */
 const TIERS = [
   { p: 2160, width: 3840, height: 2160 },
@@ -92,9 +105,32 @@ function isVideo(element: Element, parent?: Element): boolean {
  * maxWidth/maxHeight.
  */
 export function parseDash(text: string): Resolution[] {
-  const doc = new DOMParser().parseFromString(text, 'application/xml');
-  if (doc.getElementsByTagName('parsererror').length) return [];
+  const doc = parseXml(text);
+  return doc ? dashResolutions(doc) : [];
+}
 
+/** Qualities, length, live and DRM state of a DASH MPD. */
+export function parseDashInfo(text: string): StreamInfo {
+  const doc = parseXml(text);
+  if (!doc) return NO_STREAM_INFO;
+
+  const mpd = doc.documentElement;
+  const live = mpd.getAttribute('type') === 'dynamic';
+  const duration = live ? undefined : isoDuration(mpd.getAttribute('mediaPresentationDuration'));
+  return {
+    qualities: qualitiesOf(dashResolutions(doc)),
+    ...(duration ? { duration } : {}),
+    live,
+    drm: isDashDrm(doc),
+  };
+}
+
+function parseXml(text: string): Document | null {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  return doc.getElementsByTagName('parsererror').length ? null : doc;
+}
+
+function dashResolutions(doc: Document): Resolution[] {
   return [...doc.getElementsByTagNameNS('*', 'AdaptationSet')]
     .filter((set) => isVideo(set))
     .flatMap((set) => {
@@ -112,4 +148,76 @@ export function parseDash(text: string): Resolution[] {
       const max = resolutionOf(set.getAttribute('maxWidth'), set.getAttribute('maxHeight'));
       return max ? [max] : [];
     });
+}
+
+/**
+ * Whether every video set (every set, for audio-only) is protected. yt-dlp
+ * drops protected formats, so a stream with any clear video still downloads.
+ */
+function isDashDrm(doc: Document): boolean {
+  const sets = [...doc.getElementsByTagNameNS('*', 'AdaptationSet')];
+  const videoSets = sets.filter((set) => isVideo(set));
+  const judged = videoSets.length ? videoSets : sets;
+  return (
+    judged.length > 0 &&
+    judged.every((set) => set.getElementsByTagNameNS('*', 'ContentProtection').length > 0)
+  );
+}
+
+/** Seconds of an MPD duration (`PT1H2M3.5S`, `P1DT2H`); years and months never appear there. */
+function isoDuration(value: string | null): number | undefined {
+  const match = value?.match(/^P(?:([\d.]+)D)?(?:T(?:([\d.]+)H)?(?:([\d.]+)M)?(?:([\d.]+)S)?)?$/);
+  if (!match) return undefined;
+  const [, days, hours, minutes, seconds] = match.map((part) => Number(part ?? 0));
+  const total = days * 86400 + hours * 3600 + minutes * 60 + seconds;
+  return total > 0 ? total : undefined;
+}
+
+/**
+ * Keys of FairPlay, PlayReady and Widevine, the same check yt-dlp makes. Plain
+ * AES-128 encryption is not DRM: its key is a URL anyone may fetch.
+ */
+const HLS_DRM =
+  /#EXT-X-(?:SESSION-)?KEY:.*(?:URI="skd:\/\/|KEYFORMAT="(?:com\.apple\.streamingkeydelivery|com\.microsoft\.playready|urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed)")/i;
+
+export function isHlsDrm(text: string): boolean {
+  return HLS_DRM.test(text);
+}
+
+/** URL of the first variant a master playlist lists; null for a media playlist. */
+export function hlsVariantUrl(text: string, base: string): string | null {
+  const lines = text.split(/\r?\n/).map((line) => line.trim());
+  const index = lines.findIndex((line) => line.startsWith('#EXT-X-STREAM-INF:'));
+  const uri =
+    index < 0 ? undefined : lines.slice(index + 1).find((line) => line && !line.startsWith('#'));
+  if (!uri) return null;
+  try {
+    return new URL(uri, base).href;
+  } catch {
+    return null;
+  }
+}
+
+/** Length of an HLS media playlist; one without #EXT-X-ENDLIST is still growing, so live. */
+export function hlsTimeline(text: string): Pick<StreamInfo, 'duration' | 'live'> {
+  const lines = text.split(/\r?\n/);
+  const segments = lines.filter((line) => line.startsWith('#EXTINF:'));
+  if (!segments.length) return { live: false };
+  if (!lines.some((line) => line.startsWith('#EXT-X-ENDLIST'))) return { live: true };
+
+  const duration = segments.reduce(
+    (sum, line) => sum + (parseFloat(line.slice('#EXTINF:'.length)) || 0),
+    0,
+  );
+  return duration > 0 ? { duration, live: false } : { live: false };
+}
+
+/** `1:02:03`, or `4:05` under an hour. */
+export function formatDuration(length: number): string {
+  const total = Math.round(length);
+  const pad = (value: number) => value.toString().padStart(2, '0');
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = pad(total % 60);
+  return hours ? `${hours}:${pad(minutes)}:${seconds}` : `${minutes}:${seconds}`;
 }

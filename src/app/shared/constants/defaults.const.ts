@@ -1,4 +1,5 @@
 import {
+  AppModel,
   AudioFormats,
   AudioQuality,
   Codecs,
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: Readonly<SettingsModel> = {
   openApp: false,
   useSubfolder: false,
   useNamePrefix: false,
+  showPage: true,
   showQuality: true,
   hideIncognito: false,
   incognitoFolder: false,
@@ -35,7 +37,12 @@ export const DEFAULT_AUDIO_PRESET: Readonly<DownloadModel> = {
   format: AudioFormats.MP3,
 };
 
+export const DEFAULT_APP: Readonly<AppModel> = {
+  defaultFolder: null,
+};
+
 export const DEFAULT_STORAGE: Readonly<StorageModel> = {
+  app: DEFAULT_APP,
   settings: DEFAULT_SETTINGS,
   videoPreset: DEFAULT_VIDEO_PRESET,
   audioPreset: DEFAULT_AUDIO_PRESET,

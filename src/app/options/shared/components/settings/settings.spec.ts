@@ -62,10 +62,14 @@ describe('Settings', () => {
   });
 
   it('loads the app folders for the autocomplete', () => {
+    const entries = [
+      { name: 'music', type: 'folder', mount: false },
+      { name: 'video', type: 'folder', mount: true },
+    ];
     http
       .expectOne('http://localhost:3000/api/folders')
-      .flush({ root: '/downloads', folders: ['music', 'video'] });
-    expect(component.folders()).toEqual(['music', 'video']);
+      .flush({ path: '', entries, truncated: false });
+    expect(component.folders()).toEqual(entries);
   });
 
   it('cannot be saved until something changes', () => {
@@ -80,7 +84,7 @@ describe('Settings', () => {
 
   describe('options', () => {
     it('lists the flags that are on', () => {
-      expect(component.selectedOptions()).toEqual(['useSubfolder', 'showQuality']);
+      expect(component.selectedOptions()).toEqual(['useSubfolder', 'showPage', 'showQuality']);
     });
 
     it('turns on exactly the selected flags', () => {
@@ -101,7 +105,7 @@ describe('Settings', () => {
     const name = () => component.form.controls.incognitoFolderName;
     const nameInput = () =>
       (fixture.nativeElement as HTMLElement).querySelector(
-        'input[formcontrolname="incognitoFolderName"]',
+        'rt-path-input[formcontrolname="incognitoFolderName"] input',
       );
 
     it('needs no name while off', () => {

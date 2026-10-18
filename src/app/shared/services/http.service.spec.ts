@@ -82,8 +82,13 @@ describe('HttpService', () => {
   describe('getFolders', () => {
     it('lists the app folders', async () => {
       const folders = firstValueFrom(service.getFolders());
-      http.expectOne(`${APP}/api/folders`).flush({ root: '/downloads', folders: ['music'] });
-      expect(await folders).toEqual({ root: '/downloads', folders: ['music'] });
+      const listing = {
+        path: '',
+        entries: [{ name: 'music', type: 'folder', mount: false }],
+        truncated: false,
+      };
+      http.expectOne(`${APP}/api/folders`).flush(listing);
+      expect(await folders).toEqual(listing);
     });
 
     it('falls back to no folders when the app fails', async () => {
@@ -91,7 +96,7 @@ describe('HttpService', () => {
       http
         .expectOne(`${APP}/api/folders`)
         .flush('boom', { status: 500, statusText: 'Server Error' });
-      expect(await folders).toEqual({ root: '', folders: [] });
+      expect(await folders).toEqual({ path: '', entries: [], truncated: false });
     });
   });
 

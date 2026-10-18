@@ -21,20 +21,23 @@ import {
   Label,
   ManifestKind,
   ManifestService,
+  MediaDurationService,
   StorageService,
   Truncate,
   WsService,
 } from '@shared';
 import { tap } from 'rxjs';
-import { urlQualities } from '../../../../shared/helpers/manifest.helpers';
 import { CardFormValue, DownloadType } from '../../../../options/shared/models/forms.model';
+import { formatDuration, urlQualities } from '../../../../shared/helpers/manifest.helpers';
 import { CardForm } from '../card-form/card-form';
 import { DownloadBtn } from '../download-btn/download-btn';
 import {
   IDLE_ICONS,
   IN_PROGRESS,
   INDICATOR_COLORS,
-  LabelColor,
+  LABEL_ICONS,
+  LabelClasses,
+  LabelIconColors,
   LABELS_WITHOUT_INDEX,
   STATE_NAMES,
   TOOLTIPS,
@@ -42,11 +45,15 @@ import {
   UNSUCCESSFUL,
 } from './media-card.const';
 import { DownloadState, Tracked } from './media-card.model';
+import { downloadFolder } from '../../../../../shared/download';
 
 const MANIFEST_KINDS: Partial<Record<Label, ManifestKind>> = {
   [Label.HLS]: 'hls',
   [Label.DASH]: 'dash',
 };
+
+/** Single files, whose length the browser reads from their header. */
+const FILE_LABELS: ReadonlySet<Label> = new Set([Label.VIDEO, Label.AUDIO]);
 
 /** What the app already has for this source, as tracked ids; types it never downloaded stay untracked. */
 function trackedFrom(lookup: DownloadLookup | null): Partial<Record<DownloadType, Tracked>> {
@@ -98,19 +105,25 @@ export class MediaCard {
   private readonly _httpService = inject(HttpService);
   private readonly _ws = inject(WsService);
   private readonly _manifests = inject(ManifestService);
+  private readonly _durations = inject(MediaDurationService);
 
   readonly types = DownloadType;
   readonly labels = Label;
+  readonly labelIcons = LABEL_ICONS;
+  readonly labelIconColors = LabelIconColors;
+  errors: Record<DownloadType, string> = {
+    [DownloadType.VIDEO]: '',
+    [DownloadType.AUDIO]: '',
+  };
 
   readonly index = input<number>();
   readonly source = input.required<DownloadSource>();
   readonly isAppConnected = input.required<boolean>();
   readonly downloadStarted = output<void>();
 
-  errors: Record<DownloadType, string> = {
-    [DownloadType.VIDEO]: '',
-    [DownloadType.AUDIO]: '',
-  };
+  readonly downloadFolder = computed(() =>
+    downloadFolder(this._storage.state().settings, this._storage.state().app, this.source()),
+  );
 
   private readonly _lookup = rxResource({
     params: () => (this.isAppConnected() ? this.source().url : undefined),
@@ -137,28 +150,58 @@ export class MediaCard {
   readonly usePrefix = computed(() => this._storage.state().settings.useNamePrefix);
   readonly mostRecentSetting = computed(() => this._storage.state().settings.mostRecent);
 
-  /** Qualities a stream's manifest lists; idle for anything that isn't a stream. */
-  private readonly _manifestQualities = resource({
+  /** What a stream's manifest tells; idle for anything that isn't a stream. */
+  private readonly _manifest = resource({
     params: () => {
       const { url, label } = this.source();
       const kind = label && MANIFEST_KINDS[label];
       return kind ? { url, kind } : undefined;
     },
-    loader: ({ params, abortSignal }) =>
-      this._manifests.qualities(params.url, params.kind, abortSignal),
+    loader: ({ params, abortSignal }) => this._manifests.info(params.url, params.kind, abortSignal),
+  });
+
+  private readonly _stream = computed(() =>
+    this._manifest.hasValue() ? this._manifest.value() : null,
+  );
+
+  /** Length of a single file; idle for streams and pages. */
+  private readonly _fileDuration = resource({
+    params: () => {
+      const { url, label } = this.source();
+      return label && FILE_LABELS.has(label) ? url : undefined;
+    },
+    loader: ({ params, abortSignal }) => this._durations.duration(params, abortSignal),
   });
 
   /** From the manifest when it lists any, otherwise guessed from the URL; empty while the manifest loads. */
   readonly qualities = computed(() => {
     const { url, label } = this.source();
-    if (label === Label.AUDIO || this._manifestQualities.isLoading()) return [];
-    const listed = this._manifestQualities.hasValue() ? this._manifestQualities.value() : [];
+    if (label === Label.AUDIO || this._manifest.isLoading()) return [];
+    const listed = this._stream()?.qualities ?? [];
     return listed.length ? listed : urlQualities(url);
+  });
+
+  readonly maxQuality = computed(() => {
+    const qualities = this.qualities();
+    return qualities.length ? Math.max(...qualities) : null;
+  });
+
+  readonly isLive = computed(() => this._stream()?.live ?? false);
+
+  /** DRM streams can't be downloaded, so both buttons stay disabled. */
+  readonly isDrm = computed(() => this._stream()?.drm ?? false);
+
+  /** `1:02:03`; null for live streams and while unknown. */
+  readonly duration = computed(() => {
+    const seconds =
+      this._stream()?.duration ??
+      (this._fileDuration.hasValue() ? this._fileDuration.value() : null);
+    return seconds ? formatDuration(seconds) : null;
   });
 
   readonly badgeColor = computed(() => {
     const label = this.source().label;
-    return label ? LabelColor[label] : '';
+    return label ? LabelClasses[label] : '';
   });
 
   /** 1-based position shown on the card; hidden for sources that aren't a single media item. */
