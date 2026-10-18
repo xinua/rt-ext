@@ -70,24 +70,13 @@
   </div>
 
   <div class="grid grid-cols-2 gap-2">
-    <mat-form-field subscriptSizing="dynamic">
-      <mat-label>Folder</mat-label>
-      <input
-        matInput
-        formControlName="folder"
-        placeholder="e.g. movies"
-        type="text"
-        [matAutocomplete]="dir"
-      />
-
-      <mat-autocomplete #dir="matAutocomplete">
-        @for (folder of folders(); track folder) {
-          <mat-option [value]="folder">
-            {{ folder }}
-          </mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+    <rt-path-input
+      formControlName="destinationFolder"
+      label="Folder"
+      placeholder="e.g. podcasts"
+      appearance="fill"
+      subscriptSizing="dynamic"
+    />
 
     <mat-form-field class="w-full" subscriptSizing="dynamic">
       <mat-label>Prefix</mat-label>

@@ -24,6 +24,7 @@ import { SettingsOption } from './settings.model';
 import { appOriginPattern } from '../../../../../shared/app-bridge';
 import { ext } from '../../../../../shared/ext';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { PathInput } from '../../../../popup/shared/components/path-input/path-input';
 
 @Component({
   imports: [
@@ -38,6 +39,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatAutocompleteModule,
     FlagsPipe,
     ConnectValidatorDirective,
+    PathInput,
   ],
   selector: 'rt-settings',
   styleUrl: './settings.css',
@@ -50,7 +52,7 @@ export class Settings implements OnInit {
   private _changedValidator?: ValidatorFn;
 
   notify = output<string>();
-  folders = signal<FoldersModel['folders']>([]);
+  folders = signal<FoldersModel['entries']>([]);
 
   readonly flags = EXT_OPTIONS;
   form = new FormGroup<SettingsFormModel>({
@@ -139,8 +141,8 @@ export class Settings implements OnInit {
 
   private _getFolders(): Observable<FoldersModel> {
     return this._httpService.getFolders().pipe(
-      tap(({ folders }) => {
-        this.folders.set(folders);
+      tap(({ entries }) => {
+        this.folders.set(entries);
       }),
     );
   }

@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, inject, Service } from '@angular/core';
 import { catchError, Observable, of, throwError } from 'rxjs';
 import { downloadPayload, requestFlags } from '../../../shared/download';
 import { CardFormValue, DownloadType, FoldersModel } from '../../options/shared/models/forms.model';
 import { DownloadLookup, DownloadResult, DownloadSource } from '../models';
 import { StorageService } from './storage';
+import { AppSettingsModel } from '../../options/shared/components/settings/settings.model';
 
 @Service()
 export class HttpService {
@@ -34,7 +35,7 @@ export class HttpService {
   getFolders(): Observable<FoldersModel> {
     return this._http
       .get<FoldersModel>(`${this._appUrl()}/api/folders`)
-      .pipe(catchError(async () => ({ root: '', folders: [] })));
+      .pipe(catchError(async () => ({ path: '', entries: [], truncated: false })));
   }
   donwloadCustom(source: DownloadSource, body: CardFormValue): Observable<DownloadResult> {
     return this._http.post<DownloadResult>(`${this._appUrl()}/api/downloads`, {
@@ -42,5 +43,16 @@ export class HttpService {
       ...body,
       ...requestFlags(this._storage.state(), source),
     });
+  }
+
+  getAppSettings(): Observable<AppSettingsModel> {
+    return this._http.get<AppSettingsModel>(`${this._appUrl()}/api/settings`);
+  }
+
+  getFolder(path: string, files = false): Observable<FoldersModel> {
+    let params = new HttpParams().set('path', path);
+    if (files) params = params.set('files', '1');
+
+    return this._http.get<FoldersModel>(`${this._appUrl()}/api/folders`, { params });
   }
 }

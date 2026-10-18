@@ -1,6 +1,6 @@
 {
   "name": "Retriever",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Send videos and audio URLs from the web to your self-hosted Retriever app",
   "manifest_version": 3,
   "icons": {

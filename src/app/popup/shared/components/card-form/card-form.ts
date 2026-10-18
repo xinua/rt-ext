@@ -1,14 +1,5 @@
 import { TitleCasePipe } from '@angular/common';
-import {
-  Component,
-  DestroyRef,
-  inject,
-  input,
-  OnInit,
-  output,
-  signal,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, inject, input, OnInit, output, signal, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +10,7 @@ import { MatOption, MatSelectModule, MatSelectTrigger } from '@angular/material/
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DownloadSource, HttpService, Label, StorageService } from '@shared';
 import { Observable, tap } from 'rxjs';
+import { downloadFolder } from '../../../../../shared/download';
 import {
   AudioFormats,
   AudioQuality,
@@ -31,7 +23,7 @@ import {
   VideoQuality,
 } from '../../../../options/shared/models/forms.model';
 import { DownloadState } from '../media-card/media-card.model';
-import { downloadFolder } from '../../../../../shared/download';
+import { PathInput } from '../path-input/path-input';
 
 @Component({
   imports: [
@@ -47,6 +39,7 @@ import { downloadFolder } from '../../../../../shared/download';
     MatTooltipModule,
     MatAutocompleteModule,
     MatIcon,
+    PathInput,
   ],
   selector: 'rt-card-form',
   styleUrl: './card-form.css',
@@ -56,7 +49,6 @@ import { downloadFolder } from '../../../../../shared/download';
 export class CardForm implements OnInit {
   private readonly _httpService = inject(HttpService);
   private readonly _storage = inject(StorageService);
-  private readonly _destroyRef = inject(DestroyRef);
 
   errors = input.required<Record<DownloadType, string>>();
   source = input.required<DownloadSource>();
@@ -81,7 +73,7 @@ export class CardForm implements OnInit {
     prefix: new FormControl(''),
   });
 
-  folders = signal<FoldersModel['folders']>([]);
+  folders = signal<FoldersModel['entries']>([]);
 
   readonly downloadType = DownloadType;
   readonly downloadTypes = Object.values(DownloadType);
@@ -114,8 +106,8 @@ export class CardForm implements OnInit {
 
   private _getFolders(): Observable<FoldersModel> {
     return this._httpService.getFolders().pipe(
-      tap(({ folders }) => {
-        this.folders.set(folders);
+      tap(({ entries }) => {
+        this.folders.set(entries);
       }),
     );
   }

@@ -104,7 +104,19 @@ export enum AudioQuality {
   LQ = '128kbps',
 }
 
+export enum FolderType {
+  FOLDER = 'folder',
+  FILE = 'file',
+}
+
 export interface FoldersModel {
-  root: string;
-  folders: string[];
+  path: string;
+  truncated: boolean;
+  entries: FolderEntry[];
+}
+
+export interface FolderEntry {
+  name: string;
+  type: FolderType;
+  mount: boolean;
 }

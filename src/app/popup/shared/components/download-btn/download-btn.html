@@ -9,7 +9,13 @@
   [class]="isVideo ? 'rounded-e-none! pr-0! pl-1!' : 'rounded-s-none! pl-0! pr-1!'"
   [class.cursor-incognito]="isIncognito()"
   [attr.aria-label]="ariaLabels()[type()]"
-  [matTooltip]="hasError ? errors()[type()] : tooltips()[type()]"
+  [matTooltip]="
+    hasError
+      ? errors()[type()]
+      : percent && percent === 100
+        ? 'Post-processing...'
+        : tooltips()[type()]
+  "
   [matTooltipDisabled]="!tooltips()[type()]"
   matTooltipPosition="above"
   disabledInteractive
@@ -31,7 +37,7 @@
     @if (percent < 100) {
       <span class="text-[10px] tabular-nums" aria-hidden="true">{{ percent }}%</span>
     } @else {
-      <mat-icon svgIcon="loading" class="scale-75" matTooltip="Post-processing..." />
+      <mat-icon svgIcon="loading" class="scale-75" />
     }
   } @else {
     <mat-icon [svgIcon]="icons()[type()]" class="scale-75" />
